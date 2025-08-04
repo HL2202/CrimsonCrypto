@@ -1073,125 +1073,245 @@
                     
                     <h3 class="text-xl font-semibold mb-4 text-white">Key Performance Metrics</h3>
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-700">
-                            <thead class="bg-gray-700">
-                                <tr>
-                                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Strategy</th>
-                                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Annual Return (%)</th>
-                                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Annual Volatility (%)</th>
-                                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Sharpe Ratio</th>
-                                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Max Drawdown (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-700">
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Amihud_14</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">162.16</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">58.67</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">2.76</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-53.6</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Amihud_28</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">153.7</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">57.23</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">2.69</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-56.28</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Amihud_21</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">151.67</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">55.62</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">2.73</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-60.07</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Amihud_7</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">152.43</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">55.87</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">2.73</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-52.05</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Amihud_90</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">117.5</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">53.47</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">2.2</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-56.57</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Volatility_14</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">121.24</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">68.89</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.76</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-55.23</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">RSI_21</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">114.93</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">55.49</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">2.07</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-32.63</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Momentum_4w</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">111.2</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">57.95</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.92</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-37.26</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Volatility_21</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">109.98</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">66.94</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.64</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-59.49</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Volatility_42</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">100.12</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">69.84</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.43</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-63.8</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">BTC</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">65.79</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">59.91</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.1</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-75.9</td>
-                                </tr>
-                            </tbody>
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr class="bg-gradient-to-r from-purple-800 to-indigo-800 text-white">
+                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                Strategy
+                              </th>
+                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                Annual Return (%)
+                              </th>
+                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                Annual Volatility (%)
+                              </th>
+                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                Sharpe Ratio
+                              </th>
+                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                Max Drawdown (%)
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Amihud_14
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                162.16
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                58.67
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                2.76
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -53.6
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Amihud_28
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                153.7
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                57.23
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                2.69
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -56.28
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Amihud_21
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                151.67
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                55.62
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                2.73
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -60.07
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Amihud_7
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                152.43
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                55.87
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                2.73
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -52.05
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Amihud_90
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                117.5
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                53.47
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                2.2
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -56.57
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Volatility_14
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                121.24
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                68.89
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.76
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -55.23
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                RSI_21
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                114.93
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                55.49
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                2.07
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -32.63
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Momentum_4w
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                111.2
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                57.95
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.92
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -37.26
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Volatility_21
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                109.98
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                66.94
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.64
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -59.49
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Volatility_42
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                100.12
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                69.84
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.43
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -63.8
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                BTC
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                65.79
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                59.91
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.1
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -75.9
+                              </td>
+                            </tr>
+                          </tbody>
                         </table>
-                    </div>
+                      </div>
 
                     <br> 
 
                     <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Cumulative Returns of Our Equal-Weight Strategies</h2>
 
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011895/ew_log_cumulative_returns_bharxe.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298597/ew_log_cumulative_returns_b4v0ss.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical logarithmic cumulative returns of our top performing Equal-Weight strategies over time, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011519/ew_cumulative_returns_q5g1lk.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298233/ew_cumulative_returns_xwdofz.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical cumulative returns of our top performing Equal-Weight strategies over time, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045452/log_cumret_top10_EW2_by0jta.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298652/log_cumret_top10_EW2_uvwiex.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical logarithmic cumulative returns of our top performing Equal-Weight Logarithmic strategies over time excluding the top strategy, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045474/cumret_top10_EW2_str9di.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298727/cumret_top10_EW2_d7d9cf.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical cumulative returns of our top performing Equal-Weight strategies over time excluding the top strategy, compared to Bitcoin as a baseline.
                         <br>
@@ -1200,35 +1320,35 @@
                     <br>
 
                     <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Quantitative Analysis of Our Equal-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011554/ew_performance_radar_j5za9b.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298429/ew_performance_radar_sdmvlp.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates our top performing Equal-Weight strategies with the best Sharpe ratios, annualised returns, average returns, high win rates (more positive days) and lowest drawdown and volatility, showing all categories as a comparison.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011560/ew_returns_candles_hu8arf.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298481/ew_returns_candles_tdm5kh.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical monthly returns of our top performing Equal-Weight Logarithmic strategies over time.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011543/ew_performance_heatmap_julnzr.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298384/ew_performance_heatmap_uputpi.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical monthly positive and negative returns of our top performing Equal-Weight Logarithmic strategies over time.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011539/ew_drawdown_analysis_kkxtgu.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298317/ew_drawdown_analysis_spghsw.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the max drawdowns and cumulative returns with drawdowns of our top performing Equal-Weight Logarithmic strategies over time.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011577/ew_rolling_sharpe_dashboard_t2i8ot.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298526/ew_rolling_sharpe_dashboard_vzawss.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the rolling Sharpe ratios, rolling volatilites, return distribution and correlation matrix of our top performing Equal-Weight Logarithmic strategies over time.
                         <br>
@@ -1237,21 +1357,21 @@
                     <br>
 
                     <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Descriptive Statistics of Our Equal-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045559/mean_bars_EW_ehd4lh.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299071/mean_bars_EW_ao1tmy.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical annualised mean returns of our top performing Equal-Weight strategies, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045499/vol_bars_EW_tlc3no.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298831/vol_bars_EW_htgfb7.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical annualised volatilities of our top performing Equal-Weight strategies, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045517/sharpe_bars_EW_d8zjwg.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298946/sharpe_bars_EW_xhpaqe.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical annualised Sharpe ratios of our top performing Equal-Weight strategies, compared to Bitcoin as a baseline.
                         <br>
@@ -1260,14 +1380,14 @@
                     <br>
 
                     <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Alternative Equal-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045543/min_vol_bars_EW_wmfowo.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298991/min_vol_bars_EW_jfi0aa.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the Equal-Weight strategies with the lowest annualised volatilities, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045573/max_sharpe_bars_EW_i9brpt.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299113/max_sharpe_bars_EW_tqxbms.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the Equal-Weight strategies with the highest annualised Sharpe ratios, compared to Bitcoin as a baseline.
                         <br>
@@ -1283,123 +1403,243 @@
                     
                     <h3 class="text-xl font-semibold mb-4 text-white">Key Performance Metrics</h3>
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-700">
-                            <thead class="bg-gray-700">
-                                <tr>
-                                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Strategy</th>
-                                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Annual Return (%)</th>
-                                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Annual Volatility (%)</th>
-                                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Sharpe Ratio</th>
-                                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider">Max Drawdown (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-700">
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Amihud_28</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">166.88</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">101.46</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.64</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-76.42</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Amihud_7</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">170.93</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">109.07</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.57</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-53.38</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Amihud_14</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">145.61</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">106.63</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.37</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-71.91</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Amihud_21</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">139.34</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">98.69</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.41</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-76.71</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">RSI_28</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">119.26</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">86.78</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.37</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-65.05</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Momentum_4w</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">117.64</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">93.52</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.26</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-69.43</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Amihud_90</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">85.71</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">100.92</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">0.85</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-73.26</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">RSI_21</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">91.06</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">82.2</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.11</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-55.17</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">Strev_weekly</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">79.25</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">93.02</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">0.85</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-68.94</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">RSI_90</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">68.72</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">76.51</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">0.9</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-64.28</td>
-                                </tr>
-                                <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-200">
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-200">BTC</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">65.79</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">59.91</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">1.1</td>
-                                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-200">-75.9</td>
-                                </tr>
-                            </tbody>
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr class="bg-gradient-to-r from-purple-800 to-indigo-800 text-white">
+                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                Strategy
+                              </th>
+                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                Annual Return (%)
+                              </th>
+                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                Annual Volatility (%)
+                              </th>
+                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                Sharpe Ratio
+                              </th>
+                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                Max Drawdown (%)
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Amihud_28
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                166.88
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                101.46
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.64
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -76.42
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Amihud_7
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                170.93
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                109.07
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.57
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -53.38
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Amihud_14
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                145.61
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                106.63
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.37
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -71.91
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Amihud_21
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                139.34
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                98.69
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.41
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -76.71
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                RSI_28
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                119.26
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                86.78
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.37
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -65.05
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Momentum_4w
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                117.64
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                93.52
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.26
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -69.43
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Amihud_90
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                85.71
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                100.92
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                0.85
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -73.26
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                RSI_21
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                91.06
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                82.2
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.11
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -55.17
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                Strev_weekly
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                79.25
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                93.02
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                0.85
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -68.94
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                RSI_90
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                68.72
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                76.51
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                0.9
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -64.28
+                              </td>
+                            </tr>
+                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                BTC
+                              </td>
+                              <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                65.79
+                              </td>
+                              <td class="py-4 px-6 text-center">
+                                59.91
+                              </td>
+                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                1.1
+                              </td>
+                              <td class="py-4 px-6 text-center text-red-400">
+                                -75.9
+                              </td>
+                            </tr>
+                          </tbody>
                         </table>
-                    </div>
+                      </div>
 
                     <br> 
 
                     <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Cumulative Returns of Our Value-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011832/vw_log_cumulative_returns_y2nlpl.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299752/vw_log_cumulative_returns_zn0gnx.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical logarithmic cumulative returns of our top performing Value-Weight strategies over time, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011738/vw_cumulative_returns_mmfe7k.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299327/vw_cumulative_returns_n33xfy.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical cumulative returns of our top performing Value-Weight strategies over time, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045604/log_cumret_top10_VW2_rfpxjd.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299814/log_cumret_top10_VW2_q45k3k.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical logarithmic cumulative returns of our top performing Value-Weight Logarithmic strategies over time excluding the top strategy, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045617/cumret_top10_VW2_v0zeiq.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299875/cumret_top10_VW2_x7lsyx.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical cumulative returns of our top performing Value-Weight strategies over time excluding the top strategy, compared to Bitcoin as a baseline.
                         <br>
@@ -1408,35 +1648,35 @@
                     <br>
 
                     <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Quantitative Analysis of Our Value-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011787/vw_performance_radar_rfd8wt.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299479/vw_performance_radar_donpbj.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates our top performing Value-Weight strategies with the best Sharpe ratios, annualised returns, average returns, high win rates (more positive days) and lowest drawdown and volatility, showing all categories as a comparison.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011811/vw_returns_candles_sjk0vf.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299702/vw_returns_candles_obaw3l.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical monthly returns of our top performing Value-Weight Logarithmic strategies over time.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011746/vw_performance_heatmap_dm3vul.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299374/vw_performance_heatmap_nyesat.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical monthly positive and negative returns of our top performing Value-Weight Logarithmic strategies over time.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011805/vw_drawdown_analysis_aumsox.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299527/vw_drawdown_analysis_uc7zlp.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the max drawdowns and cumulative returns with drawdowns of our top performing Value-Weight Logarithmic strategies over time.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754011770/vw_rolling_sharpe_dashboard_aarj4s.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299433/vw_rolling_sharpe_dashboard_jxv1u8.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the rolling Sharpe ratios, rolling volatilites, return distribution and correlation matrix of our top performing Value-Weight Logarithmic strategies over time.
                         <br>
@@ -1445,21 +1685,21 @@
                     <br>
 
                     <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Descriptive Statistics of Our Value-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045692/mean_bars_VW_qkew9h.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754300166/mean_bars_VW_oilkoi.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical annualised mean returns of our top performing Value-Weight strategies, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045638/vol_bars_VW_uqoehd.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299983/vol_bars_VW_jfoats.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical annualised volatilities of our top performing Value-Weight strategies, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045658/sharpe_bars_VW_mdfbed.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754300057/sharpe_bars_VW_euhfxv.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the hypothetical annualised Sharpe ratios of our top performing Value-Weight strategies, compared to Bitcoin as a baseline.
                         <br>
@@ -1468,14 +1708,14 @@
                     <br>
 
                     <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Alternative Value-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045677/min_vol_bars_VW_o45vyj.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754300102/min_vol_bars_VW_rzdmf6.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the Value-Weight strategies with the lowest annualised volatilities, compared to Bitcoin as a baseline.
                         <br>
                     </p>
                     <br>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754045708/max_sharpe_bars_VW_lnafk6.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754300221/max_sharpe_bars_VW_cxd3kt.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
                     <p class="text-lg text-[#A0A0B0] mt-6">
                         This chart illustrates the Value-Weight strategies with the highest annualised Sharpe ratios, compared to Bitcoin as a baseline.
                         <br>
@@ -1537,19 +1777,19 @@
 
                 <!-- This section can be expanded with more performance metrics, charts, or tables -->
                 <section class="bg-dark-navy-alt p-8 rounded-xl shadow-lg border border-[#303060]">
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Key Performance Indicators (KPIs)</h2>
+                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Best Performing Key Performance Indicators (KPIs)</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <div class="bg-[#1A1A40] p-6 rounded-lg border border-[#303060] text-center">
                             <p class="text-sm text-[#A0A0B0]">Total Gain (YTD)</p>
-                            <p class="text-4xl font-bold text-[#39FF14] mt-2">+120.5%</p>
+                            <p class="text-4xl font-bold text-[#39FF14] mt-2">+170.93%</p>
                         </div>
                         <div class="bg-[#1A1A40] p-6 rounded-lg border border-[#303060] text-center">
                             <p class="text-sm text-[#A0A0B0]">Sharpe Ratio</p>
-                            <p class="text-4xl font-bold text-[#00FFFF] mt-2">1.85</p>
+                            <p class="text-4xl font-bold text-[#00FFFF] mt-2">2.76</p>
                         </div>
                         <div class="bg-[#1A1A40] p-6 rounded-lg border border-[#303060] text-center">
-                            <p class="text-sm text-[#A0A0B0]">Max Drawdown</p>
-                            <p class="text-4xl font-bold text-[#DC2626] mt-2">-15.2%</p>
+                            <p class="text-sm text-[#A0A0B0]">Lowest Max Drawdown</p>
+                            <p class="text-4xl font-bold text-[#DC2626] mt-2">-32.63%</p>
                         </div>
                     </div>
                     <p class="text-center text-sm text-[#A0A0B0] mt-8">
