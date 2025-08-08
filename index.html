@@ -587,6 +587,16 @@
             text-align: right;
         }
 
+        /* Style for sale transactions */
+        .transaction-card[data-type="sale"] {
+            border-left: 4px solid #DC2626;
+        }
+
+        /* Style for investment transactions */
+        .transaction-card[data-type="investment"] {
+            border-left: 4px solid #39FF14;
+        } 
+
         /* Styles for the Floating Bot Pop-up Window */
         #bot-popup-container {
             position: fixed;
@@ -841,6 +851,56 @@
             border-color: #00FFFF;
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
+
+        /* Add to your existing styles */
+        .invest-now-btn {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .sell-btn {
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 0px #DC2626;
+        }
+
+        .sell-btn:hover {
+            background-color: #EF4444;
+            box-shadow: 0 0 15px #DC2626, 0 0 30px #DC2626;
+            transform: translateY(-2px);
+        }
+
+        #investment-modal {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #investment-modal:not(.hidden) {
+            opacity: 1;
+        }
+
+        #trade-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #39FF14;
+            color: #0D0D33;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.6);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-20px);
+            transition: all 0.5s ease-in-out;
+            font-weight: 600;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        #trade-notification.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="bg-[#0D0D33] text-[#E0E0EB]">
@@ -1008,15 +1068,16 @@
                             </select>
                         </div>
 
+                        <!-- Replace this section in your index.html file -->
                         <!-- Risk Tolerance -->
                         <div class="mb-8">
                             <label for="risk-tolerance" class="block text-lg font-medium text-[#A0A0B0] mb-3">Risk Tolerance</label>
-                            <input type="range" id="risk-tolerance" min="0" max="100" value="50" class="range-slider w-full">
-                            <div class="flex justify-between text-sm text-[#A0A0B0] mt-2">
-                                <span>Low</span>
-                                <span>Medium</span>
-                                <span>High</span>
-                            </div>
+                            <select id="risk-tolerance" class="w-full p-3 rounded-lg bg-[#101030] border border-[#303060] text-[#E0E0EB] focus:outline-none focus:ring-2 focus:ring-[#00FFFF]">
+                                <option value="" selected>Select risk tolerance</option>
+                                <option value="Low">Low (Conservative)</option>
+                                <option value="Medium">Medium (Balanced)</option>
+                                <option value="High">High (Aggressive)</option>
+                            </select>
                         </div>
 
                         <!-- Time Horizon -->
@@ -1057,11 +1118,41 @@
                         </div>
                     </section>
                 </div>
+
+                <!-- Add this modal HTML right after the existing investment modal in the Strategies page content -->
+                <div id="strategies-investment-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                    <div class="bg-[#1A1A40] p-8 rounded-xl shadow-lg border border-[#00FFFF] max-w-md w-full">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-bold text-[#E0E0EB]" id="strategies-modal-strategy-name">Invest in Strategy</h3>
+                            <button id="strategies-close-modal" class="text-[#E0E0EB] hover:text-[#DC2626] text-2xl">&times;</button>
+                        </div>
+                        <form id="strategies-investment-form">
+                            <input type="hidden" id="strategies-selected-strategy">
+                            <div class="mb-4">
+                                <label for="strategies-investment-amount" class="block text-[#A0A0B0] mb-2">Investment Amount ($)</label>
+                                <input type="number" id="strategies-investment-amount" class="w-full p-3 rounded-lg bg-[#101030] border border-[#303060] text-[#E0E0EB]" min="100" step="100" value="1000" required>
+                            </div>
+                            <div class="mb-6">
+                                <label for="strategies-investment-duration" class="block text-[#A0A0B0] mb-2">Duration (months)</label>
+                                <select id="strategies-investment-duration" class="w-full p-3 rounded-lg bg-[#101030] border border-[#303060] text-[#E0E0EB]" required>
+                                    <option value="3">3 months</option>
+                                    <option value="6">6 months</option>
+                                    <option value="12" selected>12 months</option>
+                                    <option value="24">24 months</option>
+                                </select>
+                            </div>
+                            <div class="flex justify-between">
+                                <button type="button" id="strategies-cancel-investment" class="btn-outline px-6 py-2 font-semibold">Cancel</button>
+                                <button type="submit" class="btn-crimson px-6 py-2 font-semibold">Confirm Investment</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </main>
         </div>
 
 
-        <!-- NEW: PERFORMANCE PAGE CONTENT -->
+        <!-- PERFORMANCE PAGE CONTENT -->
         <div id="page-performance" class="page-content">
             <main class="container mx-auto px-6 py-12 md:py-20">
                 <h1 class="text-4xl md:text-5xl font-extrabold text-center mb-6 text-[#E0E0EB]">Performance Overview</h1>
@@ -1075,706 +1166,602 @@
                     <h3 class="text-xl font-semibold mb-4 text-white">Key Performance Metrics</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr class="bg-gradient-to-r from-purple-800 to-indigo-800 text-white">
-                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
-                                Strategy
-                              </th>
-                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
-                                Annual Return (%)
-                              </th>
-                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
-                                Annual Volatility (%)
-                              </th>
-                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
-                                Sharpe Ratio
-                              </th>
-                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
-                                Max Drawdown (%)
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Amihud_14
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                162.16
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                58.67
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                2.76
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -53.6
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Amihud_28
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                153.7
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                57.23
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                2.69
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -56.28
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Amihud_21
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                151.67
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                55.62
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                2.73
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -60.07
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Amihud_7
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                152.43
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                55.87
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                2.73
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -52.05
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Amihud_90
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                117.5
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                53.47
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                2.2
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -56.57
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Volatility_14
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                121.24
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                68.89
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.76
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -55.23
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                RSI_21
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                114.93
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                55.49
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                2.07
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -32.63
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Momentum_4w
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                111.2
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                57.95
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.92
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -37.26
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Volatility_21
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                109.98
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                66.94
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.64
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -59.49
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Volatility_42
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                100.12
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                69.84
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.43
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -63.8
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                BTC
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                65.79
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                59.91
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.1
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -75.9
-                              </td>
-                            </tr>
-                          </tbody>
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr class="bg-gradient-to-r from-purple-800 to-indigo-800 text-white">
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Strategy
+                                    </th>
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Annual Return (%)
+                                    </th>
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Annual Volatility (%)
+                                    </th>
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Sharpe Ratio
+                                    </th>
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Max Drawdown (%)
+                                    </th>
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        EW_Amihud_14
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        162.16
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        58.67
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        2.76
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -53.6
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="EW_Amihud_14">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        EW_Amihud_28
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        153.7
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        57.23
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        2.69
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -56.28
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="EW_Amihud_28">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        EW_Amihud_21
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        151.67
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        55.62
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        2.73
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -60.07
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="EW_Amihud_21">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                       EW_Amihud_7
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        152.43
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        55.87
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        2.73
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -52.05
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="EW_Amihud_7">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        EW_Amihud_90
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        117.5
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        53.47
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        2.2
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -56.57
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="EW_Amihud_90">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        EW_Volatility_14
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        121.24
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        68.89
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.76
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -55.23
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="EW_Volatility_14">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        EW_RSI_21
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        114.93
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        55.49
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        2.07
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -32.63
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="EW_RSI_21">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        EW_Momentum_4w
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        111.2
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        57.95
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.92
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -37.26
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="EW_Momentum_4w">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        EW_Volatility_21
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        109.98
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        66.94
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.64
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -59.49
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="EW_Volatility_21">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        EW_Volatility_42
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        100.12
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        69.84
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.43
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -63.8
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="EW_Volatility_42">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        BTC
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        65.79
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        59.91
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.1
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -75.9
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="BTC">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
-                      </div>
+                    </div>
 
-                    <br> 
+                    <!-- Equal-Weight Chart Selection Buttons -->
+                    <div class="flex flex-wrap justify-center gap-4 mt-8 mb-6" id="ew-chart-buttons">
+                        <button class="chart-range-button active" data-chart="ew-cumulative">Cumulative Returns</button>
+                        <button class="chart-range-button" data-chart="ew-log-cumulative">Log Cumulative Returns</button>
+                        <button class="chart-range-button" data-chart="ew-performance-radar">Performance Radar</button>
+                        <button class="chart-range-button" data-chart="ew-returns-candles">Monthly Returns</button>
+                        <button class="chart-range-button" data-chart="ew-performance-heatmap">Performance Heatmap</button>
+                        <button class="chart-range-button" data-chart="ew-drawdown-analysis">Drawdown Analysis</button>
+                        <button class="chart-range-button" data-chart="ew-rolling-sharpe">Rolling Sharpe Dashboard</button>
+                        <button class="chart-range-button" data-chart="ew-mean-bars">Mean Returns</button>
+                        <button class="chart-range-button" data-chart="ew-vol-bars">Volatility</button>
+                        <button class="chart-range-button" data-chart="ew-sharpe-bars">Sharpe Ratios</button>
+                    </div>
 
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Cumulative Returns of Our Equal-Weight Strategies</h2>
-
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298597/ew_log_cumulative_returns_b4v0ss.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical logarithmic cumulative returns of our top performing Equal-Weight strategies over time, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298233/ew_cumulative_returns_xwdofz.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical cumulative returns of our top performing Equal-Weight strategies over time, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298652/log_cumret_top10_EW2_uvwiex.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical logarithmic cumulative returns of our top performing Equal-Weight Logarithmic strategies over time excluding the top strategy, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298727/cumret_top10_EW2_d7d9cf.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical cumulative returns of our top performing Equal-Weight strategies over time excluding the top strategy, compared to Bitcoin as a baseline.
-                        <br>
-                        <strong>Disclaimer: Past performance is not indicative of future results. Investment in cryptocurrencies carries significant risk.</strong>
-                    </p>
-                    <br>
-
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Quantitative Analysis of Our Equal-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298429/ew_performance_radar_sdmvlp.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates our top performing Equal-Weight strategies with the best Sharpe ratios, annualised returns, average returns, high win rates (more positive days) and lowest drawdown and volatility, showing all categories as a comparison.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298481/ew_returns_candles_tdm5kh.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical monthly returns of our top performing Equal-Weight Logarithmic strategies over time.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298384/ew_performance_heatmap_uputpi.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical monthly positive and negative returns of our top performing Equal-Weight Logarithmic strategies over time.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298317/ew_drawdown_analysis_spghsw.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the max drawdowns and cumulative returns with drawdowns of our top performing Equal-Weight Logarithmic strategies over time.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298526/ew_rolling_sharpe_dashboard_vzawss.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the rolling Sharpe ratios, rolling volatilites, return distribution and correlation matrix of our top performing Equal-Weight Logarithmic strategies over time.
-                        <br>
-                        <strong>Disclaimer: Past performance is not indicative of future results. Investment in cryptocurrencies carries significant risk.</strong>
-                    </p>
-                    <br>
-
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Descriptive Statistics of Our Equal-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299071/mean_bars_EW_ao1tmy.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical annualised mean returns of our top performing Equal-Weight strategies, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298831/vol_bars_EW_htgfb7.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical annualised volatilities of our top performing Equal-Weight strategies, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298946/sharpe_bars_EW_xhpaqe.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical annualised Sharpe ratios of our top performing Equal-Weight strategies, compared to Bitcoin as a baseline.
-                        <br>
-                        <strong>Disclaimer: Past performance is not indicative of future results. Investment in cryptocurrencies carries significant risk.</strong>
-                    </p>
-                    <br>
-
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Alternative Equal-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754298991/min_vol_bars_EW_jfi0aa.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the Equal-Weight strategies with the lowest annualised volatilities, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299113/max_sharpe_bars_EW_tqxbms.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the Equal-Weight strategies with the highest annualised Sharpe ratios, compared to Bitcoin as a baseline.
-                        <br>
-                        <strong>Disclaimer: Past performance is not indicative of future results. Investment in cryptocurrencies carries significant risk.</strong>
-                    </p>
-                    <br>
+                    <!-- Equal-Weight Chart Containers -->
+                    <div id="ew-chart-container" class="hidden">
+                        <!-- Charts will be shown here when buttons are clicked -->
+                    </div>
                 </section>
-                <br>
-
 
                 <section class="bg-[#1A1A40] p-8 rounded-xl shadow-lg border border-[#303060] mb-10 text-center">
                     <h2 class="text-3xl font-bold text-white mb-4">Value-Weight Portfolio Statistics</h2>
                     
                     <h3 class="text-xl font-semibold mb-4 text-white">Key Performance Metrics</h3>
+                    <!-- Value-Weight Portfolio Statistics Table (modified) -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr class="bg-gradient-to-r from-purple-800 to-indigo-800 text-white">
-                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
-                                Strategy
-                              </th>
-                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
-                                Annual Return (%)
-                              </th>
-                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
-                                Annual Volatility (%)
-                              </th>
-                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
-                                Sharpe Ratio
-                              </th>
-                              <th scope="col" class="py-3 px-6 text-center tracking-wider">
-                                Max Drawdown (%)
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Amihud_28
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                166.88
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                101.46
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.64
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -76.42
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Amihud_7
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                170.93
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                109.07
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.57
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -53.38
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Amihud_14
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                145.61
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                106.63
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.37
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -71.91
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Amihud_21
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                139.34
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                98.69
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.41
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -76.71
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                RSI_28
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                119.26
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                86.78
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.37
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -65.05
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Momentum_4w
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                117.64
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                93.52
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.26
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -69.43
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Amihud_90
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                85.71
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                100.92
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                0.85
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -73.26
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                RSI_21
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                91.06
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                82.2
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.11
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -55.17
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                Strev_weekly
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                79.25
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                93.02
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                0.85
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -68.94
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                RSI_90
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                68.72
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                76.51
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                0.9
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -64.28
-                              </td>
-                            </tr>
-                            <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
-                              <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
-                                BTC
-                              </td>
-                              <td class="py-4 px-6 text-center text-green-400 font-medium">
-                                65.79
-                              </td>
-                              <td class="py-4 px-6 text-center">
-                                59.91
-                              </td>
-                              <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
-                                1.1
-                              </td>
-                              <td class="py-4 px-6 text-center text-red-400">
-                                -75.9
-                              </td>
-                            </tr>
-                          </tbody>
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr class="bg-gradient-to-r from-purple-800 to-indigo-800 text-white">
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Strategy
+                                    </th>
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Annual Return (%)
+                                    </th>
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Annual Volatility (%)
+                                    </th>
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Sharpe Ratio
+                                    </th>
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Max Drawdown (%)
+                                    </th>
+                                    <th scope="col" class="py-3 px-6 text-center tracking-wider">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        VW_Amihud_28
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        166.88
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        101.46
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.64
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -76.42
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="VW_Amihud_28">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        VW_Amihud_7
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        170.93
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        109.07
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.57
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -53.38
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="VW_Amihud_7">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        VW_Amihud_14
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        145.61
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        106.63
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.37
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -71.91
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="VW_Amihud_14">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        VW_Amihud_21
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        139.34
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        98.69
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.41
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -76.71
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="VW_Amihud_21">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        VW_RSI_28
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        119.26
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        86.78
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.37
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -65.05
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="VW_RSI_28">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        VW_Momentum_4w
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        117.64
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        93.52
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.26
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -69.43
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="VW_Momentum_4w">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        VW_Amihud_90
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        85.71
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        100.92
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        0.85
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -73.26
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="VW_Amihud_90">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        VW_RSI_21
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        91.06
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        82.2
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.11
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -55.17
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="VW_RSI_21">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        VW_Strev_weekly
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        79.25
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        93.02
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        0.85
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -68.94
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="VW_Strev_weekly">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        VW_RSI_90
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        68.72
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        76.51
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        0.9
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -64.28
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="VW_RSI_90">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="py-4 px-6 font-semibold text-white whitespace-nowrap">
+                                        BTC
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-green-400 font-medium">
+                                        65.79
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        59.91
+                                    </td>
+                                    <td class="py-4 px-6 text-center font-bold text-lg text-purple-300">
+                                        1.1
+                                    </td>
+                                    <td class="py-4 px-6 text-center text-red-400">
+                                        -75.9
+                                    </td>
+                                    <td class="py-4 px-6 text-center">
+                                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" data-strategy="BTC">Invest Now</button>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </table>
-                      </div>
+                    </div>
 
-                    <br> 
+                    <!-- Value-Weight Chart Selection Buttons -->
+                    <div class="flex flex-wrap justify-center gap-4 mt-8 mb-6" id="vw-chart-buttons">
+                        <button class="chart-range-button active" data-chart="vw-cumulative">Cumulative Returns</button>
+                        <button class="chart-range-button" data-chart="vw-log-cumulative">Log Cumulative Returns</button>
+                        <button class="chart-range-button" data-chart="vw-performance-radar">Performance Radar</button>
+                        <button class="chart-range-button" data-chart="vw-returns-candles">Monthly Returns</button>
+                        <button class="chart-range-button" data-chart="vw-performance-heatmap">Performance Heatmap</button>
+                        <button class="chart-range-button" data-chart="vw-drawdown-analysis">Drawdown Analysis</button>
+                        <button class="chart-range-button" data-chart="vw-rolling-sharpe">Rolling Sharpe Dashboard</button>
+                        <button class="chart-range-button" data-chart="vw-mean-bars">Mean Returns</button>
+                        <button class="chart-range-button" data-chart="vw-vol-bars">Volatility</button>
+                        <button class="chart-range-button" data-chart="vw-sharpe-bars">Sharpe Ratios</button>
+                    </div>
 
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Cumulative Returns of Our Value-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299752/vw_log_cumulative_returns_zn0gnx.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical logarithmic cumulative returns of our top performing Value-Weight strategies over time, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299327/vw_cumulative_returns_n33xfy.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical cumulative returns of our top performing Value-Weight strategies over time, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299814/log_cumret_top10_VW2_q45k3k.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical logarithmic cumulative returns of our top performing Value-Weight Logarithmic strategies over time excluding the top strategy, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299875/cumret_top10_VW2_x7lsyx.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical cumulative returns of our top performing Value-Weight strategies over time excluding the top strategy, compared to Bitcoin as a baseline.
-                        <br>
-                        <strong>Disclaimer: Past performance is not indicative of future results. Investment in cryptocurrencies carries significant risk.</strong>
-                    </p>
-                    <br>
-
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Quantitative Analysis of Our Value-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299479/vw_performance_radar_donpbj.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates our top performing Value-Weight strategies with the best Sharpe ratios, annualised returns, average returns, high win rates (more positive days) and lowest drawdown and volatility, showing all categories as a comparison.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299702/vw_returns_candles_obaw3l.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical monthly returns of our top performing Value-Weight Logarithmic strategies over time.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299374/vw_performance_heatmap_nyesat.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical monthly positive and negative returns of our top performing Value-Weight Logarithmic strategies over time.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299527/vw_drawdown_analysis_uc7zlp.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the max drawdowns and cumulative returns with drawdowns of our top performing Value-Weight Logarithmic strategies over time.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299433/vw_rolling_sharpe_dashboard_jxv1u8.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the rolling Sharpe ratios, rolling volatilites, return distribution and correlation matrix of our top performing Value-Weight Logarithmic strategies over time.
-                        <br>
-                        <strong>Disclaimer: Past performance is not indicative of future results. Investment in cryptocurrencies carries significant risk.</strong>
-                    </p>
-                    <br>
-
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Descriptive Statistics of Our Value-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754300166/mean_bars_VW_oilkoi.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical annualised mean returns of our top performing Value-Weight strategies, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754299983/vol_bars_VW_jfoats.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical annualised volatilities of our top performing Value-Weight strategies, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754300057/sharpe_bars_VW_euhfxv.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical annualised Sharpe ratios of our top performing Value-Weight strategies, compared to Bitcoin as a baseline.
-                        <br>
-                        <strong>Disclaimer: Past performance is not indicative of future results. Investment in cryptocurrencies carries significant risk.</strong>
-                    </p>
-                    <br>
-
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Alternative Value-Weight Strategies</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754300102/min_vol_bars_VW_rzdmf6.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the Value-Weight strategies with the lowest annualised volatilities, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754300221/max_sharpe_bars_VW_cxd3kt.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the Value-Weight strategies with the highest annualised Sharpe ratios, compared to Bitcoin as a baseline.
-                        <br>
-                        <strong>Disclaimer: Past performance is not indicative of future results. Investment in cryptocurrencies carries significant risk.</strong>
-                    </p>
-                    <br>
+                    <!-- Value-Weight Chart Containers -->
+                    <div id="vw-chart-container" class="hidden">
+                        <!-- Charts will be shown here when buttons are clicked -->
+                    </div>
                 </section>
-
-                <br>
 
                 <section class="bg-[#1A1A40] p-8 rounded-xl shadow-lg border border-[#303060] mb-10 text-center">
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Sentiment Trading Strategy - Vader Polarity Scoring</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754049665/log_cumret_W-WED_mduloq.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical logarithmic cumulative returns of our Vader sentiment trading strategies over time, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
+                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Sentiment Trading Strategy</h2>
+                    
+                    <!-- Sentiment Chart Selection Buttons -->
+                    <div class="flex flex-wrap justify-center gap-4 mb-6" id="sentiment-chart-buttons">
+                        <button class="chart-range-button active" data-chart="sentiment-cumulative">Cumulative Returns</button>
+                        <button class="chart-range-button" data-chart="sentiment-log-cumulative">Log Cumulative Returns</button>
+                        <button class="chart-range-button" data-chart="sentiment-sharpe">Sharpe Ratios</button>
+                    </div>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754049657/cumret_W-WED_lebrez.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical cumulative returns of our Vader sentiment trading strategies over time, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754049676/sharpe_W-WED_cfark7.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the Sharpe ratios of our Vader sentiment trading strategies over time, compared to Bitcoin as a baseline.
-                        <br>
-                        <strong>Disclaimer: Past performance is not indicative of future results. Investment in cryptocurrencies carries significant risk.</strong>
-                    </p>
-                    <br>
-
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Sentiment Trading Strategy - Textblob Polarity Scoring</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754049890/polarity_log_cumret_W-WED_qgnkx0.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical logarithmic cumulative returns of our Textblob sentiment trading strategies over time, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754049702/polarity_cumret_W-WED_hrxjja.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the hypothetical cumulative returns of our Textblob sentiment trading strategies over time, compared to Bitcoin as a baseline.
-                        <br>
-                    </p>
-                    <br>
-
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754049896/polarity_sharpe_W-WED_brhgbm.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the Sharpe ratios of our Textblob sentiment trading strategies over time, compared to Bitcoin as a baseline.
-                        <br>
-                        <strong>Disclaimer: Past performance is not indicative of future results. Investment in cryptocurrencies carries significant risk.</strong>
-                    </p>
-                    <br>
+                    <!-- Sentiment Chart Containers -->
+                    <div id="sentiment-chart-container" class="hidden">
+                        <!-- Charts will be shown here when buttons are clicked -->
+                    </div>
                 </section>
-
 
                 <!-- This section can be expanded with more performance metrics, charts, or tables -->
                 <section class="bg-dark-navy-alt p-8 rounded-xl shadow-lg border border-[#303060]">
@@ -1797,6 +1784,36 @@
                         Further detailed performance metrics and customizable reports will be available soon.
                     </p>
                 </section>
+
+                <!-- Investment Modal (add this at the bottom of the Performance page content) -->
+                <div id="investment-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                    <div class="bg-[#1A1A40] p-8 rounded-xl shadow-lg border border-[#00FFFF] max-w-md w-full">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-bold text-[#E0E0EB]" id="modal-strategy-name">Invest in Strategy</h3>
+                            <button id="close-modal" class="text-[#E0E0EB] hover:text-[#DC2626] text-2xl">&times;</button>
+                        </div>
+                        <form id="investment-form">
+                            <input type="hidden" id="selected-strategy">
+                            <div class="mb-4">
+                                <label for="investment-amount" class="block text-[#A0A0B0] mb-2">Investment Amount ($)</label>
+                                <input type="number" id="investment-amount" class="w-full p-3 rounded-lg bg-[#101030] border border-[#303060] text-[#E0E0EB]" min="100" step="100" value="1000" required>
+                            </div>
+                            <div class="mb-6">
+                                <label for="investment-duration" class="block text-[#A0A0B0] mb-2">Duration (months)</label>
+                                <select id="investment-duration" class="w-full p-3 rounded-lg bg-[#101030] border border-[#303060] text-[#E0E0EB]" required>
+                                    <option value="3">3 months</option>
+                                    <option value="6">6 months</option>
+                                    <option value="12" selected>12 months</option>
+                                    <option value="24">24 months</option>
+                                </select>
+                            </div>
+                            <div class="flex justify-between">
+                                <button type="button" id="cancel-investment" class="btn-outline px-6 py-2 font-semibold">Cancel</button>
+                                <button type="submit" class="btn-crimson px-6 py-2 font-semibold">Confirm Investment</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </main>
         </div>
 
@@ -1833,100 +1850,104 @@
                     <!-- TradingView Widget END -->
                 </div>
 
-                <!-- Crypto Fear & Greed Index -->
-                <div class="bg-[#1A1A40] p-8 rounded-xl shadow-lg border border-[#303060] flex flex-col items-center justify-center mb-10">
-                    <h2 class="text-2xl font-bold text-[#E0E0EB] mb-6 text-center w-full">Crypto Fear & Greed Index</h2>
-                    <div class="sentiment-gauge-container">
-                        <div class="sentiment-gauge-arc"></div>
-                        <div class="sentiment-gauge-needle" id="sentiment-needle" style="transform: translateX(-50%) rotate(36deg);"></div>
-                        <div class="sentiment-gauge-labels">
-                            <span class="label extreme-fear">Extreme Fear</span>
-                            <span class="label fear">Fear</span>
-                            <span class="label neutral">Neutral</span>
-                            <span class="label greed">Greed</span>
-                            <span class="label extreme-greed">Extreme Greed</span>
+                <!-- Crypto Fear & Greed Index - Combined Section -->
+                <div class="bg-[#1A1A40] p-8 rounded-xl shadow-lg border border-[#303060] mb-10">
+                    <h2 class="text-2xl font-bold text-[#E0E0EB] mb-8 text-center w-full">Crypto Fear & Greed Index</h2>
+                    
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-8 w-full">
+                        <!-- Standard Crypto Fear & Greed Index -->
+                        <div class="flex flex-col items-center justify-center w-full md:w-1/2">
+                            <h3 class="text-xl font-semibold text-[#E0E0EB] mb-4">Market Sentiment Index</h3>
+                            <div class="sentiment-gauge-container">
+                                <div class="sentiment-gauge-arc"></div>
+                                <div class="sentiment-gauge-needle" id="sentiment-needle" style="transform: translateX(-50%) rotate(36deg);"></div>
+                                <div class="sentiment-gauge-labels">
+                                    <span class="label extreme-fear">Extreme Fear</span>
+                                    <span class="label fear">Fear</span>
+                                    <span class="label neutral">Neutral</span>
+                                    <span class="label greed">Greed</span>
+                                    <span class="label extreme-greed">Extreme Greed</span>
+                                </div>
+                            </div>
+                            <div class="current-sentiment-display w-full">
+                                <p id="current-sentiment-value" class="value text-[#00FFFF]">70</p>
+                                <p id="current-sentiment-label" style="color: #00FF00;">Current Status: Greed</p>
+                            </div>
+                            <p id="seven-day-average" class="seven-day-average-text w-full">Last 7-day average</p>
+                        </div>
+
+                        <!-- Polarity Crypto Fear & Greed Index -->
+                        <div class="flex flex-col items-center justify-center w-full md:w-1/2">
+                            <h3 class="text-xl font-semibold text-[#E0E0EB] mb-4">Polarity Sentiment Index</h3>
+                            <div class="sentiment-gauge-container">
+                                <div class="sentiment-gauge-arc"></div>
+                                <div class="sentiment-gauge-needle" id="sentiment-needle-2" style="transform: translateX(-50%) rotate(14.4deg);"></div>
+                                <div class="sentiment-gauge-labels">
+                                    <span class="label extreme-fear">Extreme Fear</span>
+                                    <span class="label fear">Fear</span>
+                                    <span class="label neutral">Neutral</span>
+                                    <span class="label greed">Greed</span>
+                                    <span class="label extreme-greed">Extreme Greed</span>
+                                </div>
+                            </div>
+                            <div class="current-sentiment-display w-full">
+                                <p id="current-sentiment-value-2" class="value text-[#00FFFF]">58</p>
+                                <p id="current-sentiment-label-2" class="label text-[#FFFF00]">Current Status: Neutral</p>
+                            </div>
+                            <p id="seven-day-average-2" class="seven-day-average-text w-full">Last 7-day average</p>
                         </div>
                     </div>
-                    <div class="current-sentiment-display w-full">
-                        <p id="current-sentiment-value" class="value text-[#00FFFF]">70</p>
-                        <p id="current-sentiment-label" style="color: #00FF00;">Current Status: Greed</p>
-                    </div>
-                    <p id="seven-day-average" class="seven-day-average-text w-full">Last 7-day average</p>
                 </div>
                 
                 
 
+                <!-- Replace the existing Sentiment Across Time section with this code -->
                 <section class="bg-[#1A1A40] p-8 rounded-xl shadow-lg border border-[#303060] mb-10 text-center">
                     <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Sentiment Across Time</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754223440/daily_avg_sentiment_gkkvbs.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the daily average sentiment over time using the Vader sentiment scoring.
-                        <br>
-                    </p>
-                    <br>
+                    
+                    <!-- Chart Selection Buttons -->
+                    <div class="flex flex-wrap justify-center gap-4 mb-6" id="vader-chart-buttons">
+                        <button class="chart-range-button active" data-chart="sentiment-daily">Daily Average</button>
+                        <button class="chart-range-button" data-chart="sentiment-monthly">Monthly Heatmap</button>
+                    </div>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754223471/monthly_avg_heatmap_kndgoc.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the monthly sentiment heatmap over time using the VADER sentiment scoring.
-                        <br>
-                    </p>
-                    <br>
+                    <!-- Chart Containers -->
+                    <div id="vader-chart-container" class="hidden">
+                        <!-- Charts will be shown here when buttons are clicked -->
+                    </div>
                 </section>
 
-                <!-- Crypto Fear & Greed Index -->
-                <div class="bg-[#1A1A40] p-8 rounded-xl shadow-lg border border-[#303060] flex flex-col items-center justify-center mb-10">
-                    <h2 class="text-2xl font-bold text-[#E0E0EB] mb-6 text-center w-full">Polarity Crypto Fear & Greed Index</h2>
-                    <div class="sentiment-gauge-container">
-                        <div class="sentiment-gauge-arc"></div>
-                        <div class="sentiment-gauge-needle" id="sentiment-needle" style="transform: translateX(-50%) rotate(14.4deg);"></div>
-                        <div class="sentiment-gauge-labels">
-                            <span class="label extreme-fear">Extreme Fear</span>
-                            <span class="label fear">Fear</span>
-                            <span class="label neutral">Neutral</span>
-                            <span class="label greed">Greed</span>
-                            <span class="label extreme-greed">Extreme Greed</span>
-                        </div>
-                    </div>
-                    
-                    <div class="current-sentiment-display w-full">
-                        <p id="current-sentiment-value" class="value text-[#00FFFF]">58</p>
-                        <p id="current-sentiment-label-2" class="label text-[#FFFF00]">Current Status: Neutral</p>
-                    </div>
-                    <p id="seven-day-average" class="seven-day-average-text w-full">Last 7-day average</p>
-                </div>
 
+                <!-- Replace the existing Polarity Sentiment Across Time section with this code -->
                 <section class="bg-[#1A1A40] p-8 rounded-xl shadow-lg border border-[#303060] mb-10 text-center">
                     <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Polarity Sentiment Across Time</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754049693/polarity_daily_avg_sentiment_nktvp0.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the daily average sentiment over time using the Textblob polarity scoring.
-                        <br>
-                    </p>
-                    <br>
+                    
+                    <!-- Chart Selection Buttons -->
+                    <div class="flex flex-wrap justify-center gap-4 mb-6" id="polarity-chart-buttons">
+                        <button class="chart-range-button active" data-chart="polarity-daily">Daily Average</button>
+                        <button class="chart-range-button" data-chart="polarity-monthly">Monthly Heatmap</button>
+                    </div>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754049805/polarity_monthly_avg_heatmap_onzbvj.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the monthly sentiment heatmap over time using the Textblob polarity scoring.
-                        <br>
-                    </p>
-                    <br>
+                    <!-- Chart Containers -->
+                    <div id="polarity-chart-container" class="hidden">
+                        <!-- Charts will be shown here when buttons are clicked -->
+                    </div>
                 </section>
 
+                <!-- Replace the existing Positive and Negative WordClouds section with this code -->
                 <section class="bg-[#1A1A40] p-8 rounded-xl shadow-lg border border-[#303060] mb-10 text-center">
-                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">Positive and Negative WordClouds</h2>
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754049737/wordcloud_positive_yeibkt.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the main positive words, including significant, growth, strong and innovation.
-                        <br>
-                    </p>
-                    <br>
+                    <h2 class="text-3xl font-bold text-[#E0E0EB] mb-6">WordClouds</h2>
+                    
+                    <!-- Chart Selection Buttons -->
+                    <div class="flex flex-wrap justify-center gap-4 mb-6" id="wordcloud-buttons">
+                        <button class="chart-range-button active" data-chart="wordcloud-positive">Positive Words</button>
+                        <button class="chart-range-button" data-chart="wordcloud-negative">Negative Words</button>
+                    </div>
 
-                    <img src="https://res.cloudinary.com/dlemf0esl/image/upload/v1754049686/wordcloud_negative_ao4cv1.png" alt="Cumulative Returns Chart" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
-                    <p class="text-lg text-[#A0A0B0] mt-6">
-                        This chart illustrates the main negative words, including loss, risk, drop and uncertainty.
-                        <br>
-                    </p>
-                    <br>
+                    <!-- Chart Containers -->
+                    <div id="wordcloud-container" class="hidden">
+                        <!-- Charts will be shown here when buttons are clicked -->
+                    </div>
                 </section>
 
                 <!-- Latest News & Analysis -->
@@ -1954,11 +1975,11 @@
                         <div class="flex flex-col md:flex-row justify-between items-center mb-8">
                             <div>
                                 <p class="text-lg text-[#A0A0B0]">Total Value</p>
-                                <p id="total-portfolio-value" class="text-5xl font-bold text-[#39FF14]">$123,456.78</p>
+                                <p id="total-portfolio-value" class="text-5xl font-bold text-[#39FF14]">$0.01</p>
                             </div>
                             <div class="mt-4 md:mt-0 text-right">
                                 <p class="text-lg text-[#A0A0B0]">24h Change</p>
-                                <p id="portfolio-24h-change" class="text-3xl font-bold text-[#39FF14]">+1,234.56 (+1.01%)</p>
+                                <p id="portfolio-24h-change" class="text-3xl font-bold text-[#39FF14]">+$0.00 (+0.00%)</p>
                             </div>
                         </div>
                         <!-- Portfolio Distribution Chart -->
@@ -2013,38 +2034,11 @@
                                     <th class="py-3 px-4 text-sm font-medium uppercase tracking-wider">Amount</th>
                                     <th class="py-3 px-4 text-sm font-medium uppercase tracking-wider">Current Price</th>
                                     <th class="py-3 px-4 text-sm font-medium uppercase tracking-wider">Value</th>
-                                    <th class="py-3 px-4 text-sm font-medium uppercase tracking-wider">24h Change</th>
+                                    <th class="py-3 px-4 text-sm font-medium uppercase tracking-wider">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="border-b border-[#303060]">
-                                    <td class="py-4 px-4 font-semibold">Bitcoin (BTC)</td>
-                                    <td class="py-4 px-4">0.15 BTC</td>
-                                    <td class="py-4 px-4">$68,543.21</td>
-                                    <td class="py-4 px-4">$10,281.48</td>
-                                    <td class="py-4 px-4 text-[#39FF14]">+2.5%</td>
-                                </tr>
-                                <tr class="border-b border-[#303060]">
-                                    <td class="py-4 px-4 font-semibold">Ethereum (ETH)</td>
-                                    <td class="py-4 px-4">2.3 ETH</td>
-                                    <td class="py-4 px-4">$3,876.54</td>
-                                    <td class="py-4 px-4">$8,916.04</td>
-                                    <td class="py-4 px-4 text-[#39FF14]">+3.1%</td>
-                                </tr>
-                                <tr class="border-b border-[#303060]">
-                                    <td class="py-4 px-4 font-semibold">Solana (SOL)</td>
-                                    <td class="py-4 px-4">50 SOL</td>
-                                    <td class="py-4 px-4">$145.67</td>
-                                    <td class="py-4 px-4">$7,283.50</td>
-                                    <td class="py-4 px-4 text-[#39FF14]">+1.7%</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-4 px-4 font-semibold">Cardano (ADA)</td>
-                                    <td class="py-4 px-4">1500 ADA</td>
-                                    <td class="py-4 px-4">$0.4567</td>
-                                    <td class="py-4 px-4">$685.05</td>
-                                    <td class="py-4 px-4 text-[#DC2626]">-0.5%</td>
-                                </tr>
+                            <tbody id="holdings-table-body">
+                                <!-- Holdings will be dynamically added here -->
                             </tbody>
                         </table>
                     </div>
@@ -2898,6 +2892,17 @@
         let db;
         let auth;
         let userId = null; // To store the authenticated user's ID
+        let investmentModal = document.getElementById('investment-modal');
+        // Add this at the top with other variable declarations
+        let userPortfolio = {
+            totalValue: 0,
+            holdings: {},
+            transactions: []
+        };
+        // Track user transactions
+        let userTransactions = [];
+        
+
 
         // Initialize Firebase and set up auth listener
         const initializeFirebase = async () => {
@@ -2934,10 +2939,35 @@
         // Call Firebase initialization
         initializeFirebase();
 
+        // Add this variable at the top of your script to track the active chart buttons
+        let activeInsightsChartButtons = {
+            vader: null,
+            polarity: null,
+            wordcloud: null
+        };
+        
+        function closeAllModals() {
+            const investmentModal = document.getElementById('investment-modal');
+            const strategiesModal = document.getElementById('strategies-investment-modal');
+            
+            if (investmentModal && !investmentModal.classList.contains('hidden')) {
+                investmentModal.classList.add('hidden');
+            }
+            if (strategiesModal && !strategiesModal.classList.contains('hidden')) {
+                strategiesModal.classList.add('hidden');
+            }
+        }
+
 
         // Function to show a specific page and hide others
         function showPage(pageId, authTab = '') {
             console.log(`[showPage] Attempting to show page: ${pageId}`); // Debugging log
+                // Close any open investment modal when navigating away
+            if (investmentModal && !investmentModal.classList.contains('hidden')) {
+                investmentModal.classList.add('hidden');
+                console.log("Closed investment modal during page navigation");
+            }
+            closeAllModals();
             const pages = document.querySelectorAll('.page-content');
             pages.forEach(page => {
                 console.log(`[showPage] Page '${page.id}' computed display BEFORE removing active: ${window.getComputedStyle(page).display}`);
@@ -2956,7 +2986,12 @@
                 setTimeout(() => {
                     console.log(`[showPage] Page '${targetPage.id}' computed display AFTER adding active: ${window.getComputedStyle(targetPage).display}`);
                 }, 10); // Small delay
-            } else {
+            } 
+                    // Reset Insights page charts if navigating to Insights
+            if (pageId === 'insights') {
+                resetInsightsCharts();
+            }
+            else {
                 console.error(`[showPage] Page with ID 'page-${pageId}' not found.`); // Debugging log
             }
 
@@ -2964,6 +2999,11 @@
             // Handle auth page specific tab display
             if (pageId === 'auth') {
                 showAuthTab(authTab);
+            }
+
+                // If navigating to performance page, setup the chart toggling
+            if (pageId === 'performance') {
+                setupPerformancePage();
             }
 
             // If navigating to insights page, fetch fear and greed index and load news
@@ -3001,6 +3041,7 @@
                     portfolioChartRangeButtons.forEach(btn => btn.classList.remove('active'));
                     allRangeButton.classList.add('active');
                 }
+                updateRecentTransactions();
                 drawPortfolioValueChart('all'); // Call the new chart function with 'all' data
             }
 
@@ -3012,6 +3053,352 @@
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        // Add this new function to reset Insights charts
+        function resetInsightsCharts() {
+            // Reset Vader charts
+            const vaderDefaultButton = document.querySelector('#vader-chart-buttons button[data-chart="sentiment-daily"]');
+            if (vaderDefaultButton) {
+                vaderDefaultButton.click();
+            }
+            
+            // Reset Polarity charts
+            const polarityDefaultButton = document.querySelector('#polarity-chart-buttons button[data-chart="polarity-daily"]');
+            if (polarityDefaultButton) {
+                polarityDefaultButton.click();
+            }
+            
+            // Reset Wordcloud charts
+            const wordcloudDefaultButton = document.querySelector('#wordcloud-buttons button[data-chart="wordcloud-positive"]');
+            if (wordcloudDefaultButton) {
+                wordcloudDefaultButton.click();
+            }
+            
+            console.log("Insights page charts reset to default views");
+        }
+
+        // Modify your existing chart button setup code (if you have one) to track active buttons
+        function setupInsightsChartButtons() {
+            // Vader chart buttons
+            const vaderButtons = document.querySelectorAll('#vader-chart-buttons .chart-range-button');
+            vaderButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    vaderButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    activeInsightsChartButtons.vader = button.dataset.chart;
+                    // Your existing chart display logic here
+                });
+            });
+
+            // Polarity chart buttons
+            const polarityButtons = document.querySelectorAll('#polarity-chart-buttons .chart-range-button');
+            polarityButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    polarityButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    activeInsightsChartButtons.polarity = button.dataset.chart;
+                    // Your existing chart display logic here
+                });
+            });
+
+            // Wordcloud buttons
+            const wordcloudButtons = document.querySelectorAll('#wordcloud-buttons .chart-range-button');
+            wordcloudButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    wordcloudButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    activeInsightsChartButtons.wordcloud = button.dataset.chart;
+                    // Your existing chart display logic here
+                });
+            });
+        }
+
+        // Call this function when initializing your page
+        setupInsightsChartButtons();
+
+        // Function to add a new transaction
+        function addTransaction(type, strategy, amount, date = new Date()) {
+            const transaction = {
+                type: type,
+                strategy: strategy,
+                amount: amount,
+                date: date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }),
+                value: amount
+            };
+            
+            // Add to beginning of array to keep most recent first
+            userTransactions.unshift(transaction);
+            
+            // Update UI if on portfolio page
+            if (document.getElementById('page-portfolio')?.classList.contains('active')) {
+                updateRecentTransactions();
+                setupPortfolioPage();
+            }
+            
+            // Also update the all transactions page if it's active
+            if (document.getElementById('page-all-transactions')?.classList.contains('active')) {
+                renderAllTransactions();
+            }
+            
+            // Show trade notification
+            showTradeNotification(`Invested $${amount} in ${strategy}`);
+        }
+
+        // Function to update the Recent Transactions UI
+        function updateRecentTransactions() {
+            const transactionsContainer = document.querySelector('#page-portfolio .space-y-4');
+            if (!transactionsContainer) return;
+            
+            // Clear existing transactions
+            transactionsContainer.innerHTML = '';
+            
+            // Show only the 3 most recent transactions
+            const recentTransactions = userPortfolio.transactions.slice(0, 3);
+            
+            if (recentTransactions.length === 0) {
+                // Show empty state if no transactions
+                transactionsContainer.innerHTML = `
+                    <div class="bg-[#101030] p-4 rounded-lg text-center text-[#A0A0B0] border border-[#303060]">
+                        No transactions yet. Invest in a strategy to see transactions here.
+                    </div>
+                `;
+                return;
+            }
+            
+            // Add each transaction to the UI
+            recentTransactions.forEach(transaction => {
+                const transactionElement = document.createElement('div');
+                transactionElement.className = 'bg-[#101030] p-4 rounded-lg flex justify-between items-center border border-[#303060] transaction-card';
+                
+                // Determine styling based on transaction type
+                const isSale = transaction.type === 'sale';
+                const valueClass = isSale ? 'text-[#DC2626]' : 'text-[#39FF14]';
+                const valuePrefix = isSale ? '-' : '+';
+                const icon = isSale ? '↓' : '↑';
+                const typeText = isSale ? 'Sold' : 'Invested in';
+                
+                transactionElement.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="text-lg ${valueClass}">${icon}</span>
+                        <div>
+                            <p class="font-semibold text-[#E0E0EB]">${typeText} ${transaction.strategy}</p>
+                            <p class="text-sm text-[#A0A0B0]">${transaction.date}</p>
+                        </div>
+                    </div>
+                    <span class="${valueClass} font-semibold">${valuePrefix}$${transaction.amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                `;
+                
+                transactionsContainer.appendChild(transactionElement);
+            });
+        }
+
+        // Add this new function to handle portfolio updates
+        function addToPortfolio(strategy, amount) {
+            // Update total portfolio value
+            userPortfolio.totalValue += amount;
+            
+            // Update or create holding for this strategy
+            if (!userPortfolio.holdings[strategy]) {
+                userPortfolio.holdings[strategy] = {
+                    amount: amount,
+                    currentValue: amount // Assuming initial value equals investment
+                };
+            } else {
+                userPortfolio.holdings[strategy].amount += amount;
+                userPortfolio.holdings[strategy].currentValue += amount;
+            }
+            
+            // Add transaction record
+            const transaction = {
+                type: 'investment',
+                strategy: strategy,
+                amount: amount,
+                date: new Date().toLocaleDateString(),
+                value: amount
+            };
+            userPortfolio.transactions.push(transaction);
+            
+            // Update UI
+            updatePortfolioUI();
+            updateHoldingsTable(); // Add this line to update the table
+        }
+
+        // Add this function to update the portfolio UI
+        function updatePortfolioUI() {
+            // Update total value display
+            const totalValueElement = document.getElementById('total-portfolio-value');
+            if (totalValueElement) {
+                totalValueElement.textContent = `$${userPortfolio.totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            }
+            
+            // Update holdings table if on portfolio page
+            if (document.getElementById('page-portfolio')?.classList.contains('active')) {
+                drawPortfolioPieChart();
+                updateRecentTransactions();
+                updateHoldingsTable(); // Add this line
+                renderAllTransactions();
+            }
+        }
+
+        // Add this function to update the holdings table
+        function updateHoldingsTable() {
+            const holdingsTableBody = document.getElementById('holdings-table-body');
+            if (!holdingsTableBody) return;
+
+            // Clear existing rows
+            holdingsTableBody.innerHTML = '';
+
+            // Add a row for each holding
+            for (const [strategy, holding] of Object.entries(userPortfolio.holdings)) {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-[#101030] transition-colors duration-200';
+
+                // Calculate current value and price
+                const currentValue = holding.currentValue;
+                const currentPrice = currentValue / holding.amount;
+                
+                row.innerHTML = `
+                    <td class="py-4 px-4 font-semibold text-[#E0E0EB]">${strategy}</td>
+                    <td class="py-4 px-4">${holding.amount.toFixed(4)}</td>
+                    <td class="py-4 px-4">$${currentPrice.toFixed(2)}</td>
+                    <td class="py-4 px-4">$${currentValue.toFixed(2)}</td>
+                    <td class="py-4 px-4">
+                        <button class="sell-btn px-4 py-2 rounded-lg bg-[#DC2626] text-white font-semibold hover:bg-[#EF4444] transition-colors" 
+                                data-strategy="${strategy}"
+                                data-amount="${holding.amount}">
+                            Sell
+                        </button>
+                    </td>
+                `;
+                
+                holdingsTableBody.appendChild(row);
+            }
+
+            // If no holdings, show a message
+            if (Object.keys(userPortfolio.holdings).length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `
+                    <td colspan="5" class="py-8 text-center text-[#A0A0B0]">
+                        No holdings yet. Invest in a strategy to see your portfolio here.
+                    </td>
+                `;
+                holdingsTableBody.appendChild(emptyRow);
+            }
+
+            // Add event listeners to all sell buttons
+            document.querySelectorAll('.sell-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const strategy = e.target.dataset.strategy;
+                    const amount = parseFloat(e.target.dataset.amount);
+                    sellInvestment(strategy, amount);
+                });
+            });
+        }
+
+
+        // Add this new function to handle selling investments
+        function sellInvestment(strategy) {
+            if (!userPortfolio.holdings[strategy]) {
+                console.error(`No holdings found for strategy: ${strategy}`);
+                return;
+            }
+
+            // Get the current value of the investment
+            const amount = userPortfolio.holdings[strategy].currentValue;
+
+            // Create and show custom confirmation dialog
+            const dialog = document.createElement('div');
+            dialog.className = 'confirmation-dialog';
+            dialog.innerHTML = `
+                <div class="dialog-content">
+                    <p>Are you sure you want to sell your ${strategy} investment for $${amount.toLocaleString()}?</p>
+                    <div class="dialog-buttons">
+                        <button id="confirm-sell">Yes, Sell</button>
+                        <button id="cancel-sell">Cancel</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(dialog);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                .confirmation-dialog {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0,0,0,0.5);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                }
+                .dialog-content {
+                    background: #1a237e; /* Dark blue background */
+                    color: white; /* White text for contrast */
+                    padding: 20px;
+                    border-radius: 8px;
+                    max-width: 400px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                }
+                .dialog-buttons {
+                    display: flex;
+                    justify-content: flex-end;
+                    margin-top: 20px;
+                    gap: 10px;
+                }
+                .dialog-buttons button {
+                    padding: 8px 16px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+                #confirm-sell {
+                    background-color: #ff4444;
+                    color: white;
+                }
+                #cancel-sell {
+                    background-color: #f0f0f0;
+                    color: #333; /* Dark text for light button */
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Event listeners remain the same
+            document.getElementById('confirm-sell').addEventListener('click', () => {
+                userPortfolio.totalValue -= amount;
+                delete userPortfolio.holdings[strategy];
+
+                const transaction = {
+                    type: 'sale',
+                    strategy: strategy,
+                    amount: amount,
+                    date: new Date().toLocaleDateString(),
+                    value: amount
+                };
+                userPortfolio.transactions.unshift(transaction);
+
+                updatePortfolioUI();
+                showTradeNotification(`Sold $${amount.toLocaleString()} of ${strategy}`);
+                
+                document.body.removeChild(dialog);
+                document.head.removeChild(style);
+            });
+
+            document.getElementById('cancel-sell').addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                document.head.removeChild(style);
+            });
+        }
+        
 
         // Function to show either login or signup tab on the auth page
         function showAuthTab(tab) {
@@ -3172,10 +3559,11 @@
 
 
         // Fear and Greed Index Gauge Logic (Insights Page)
-        function updateFearGreedGauge(value) {
-            const needle = document.getElementById('sentiment-needle');
-            const sentimentValueText = document.getElementById('current-sentiment-value');
-            const sentimentLabelText = document.getElementById('current-sentiment-label');
+        // Fear and Greed Index Gauge Logic (Insights Page)
+        function updateFearGreedGauge(value, gaugeNumber = 1) {
+            const needle = document.getElementById(`sentiment-needle${gaugeNumber > 1 ? '-' + gaugeNumber : ''}`);
+            const sentimentValueText = document.getElementById(`current-sentiment-value${gaugeNumber > 1 ? '-' + gaugeNumber : ''}`);
+            const sentimentLabelText = document.getElementById(`current-sentiment-label${gaugeNumber > 1 ? '-' + gaugeNumber : ''}`);
 
             if (!needle || !sentimentValueText || !sentimentLabelText) {
                 console.warn("Fear & Greed Index elements not found. Skipping gauge update.");
@@ -3318,7 +3706,7 @@
                 title: "Venture Vulture",
                 description: "This aggressive strategy involves actively chasing the highest return cryptocurrencies, often new and highly volatile assets, for rapid capital growth. It requires constant monitoring and carries extreme risk.",
                 investmentGoal: "capital-growth",
-                riskTolerance: "Extreme",
+                riskTolerance: "High",
                 timeHorizon: "short-term",
                 assetClasses: ["Altcoins"],
                 expectedReturn: "Extremely High",
@@ -3348,7 +3736,7 @@
                 title: "Reduced Volatility",
                 description: "This strategy focuses on constructing a portfolio with the lowest possible variance, aiming to minimize overall volatility. It is suitable for risk-averse investors who prioritize capital preservation over high returns, seeking stable growth even in fluctuating markets.",
                 investmentGoal: "diversification",
-                riskTolerance: "Very Low",
+                riskTolerance: "Low",
                 timeHorizon: "medium-term",
                 assetClasses: ["Altcoins"],
                 expectedReturn: "Low-Medium",
@@ -3488,6 +3876,7 @@
 
         const strategiesContainer = document.getElementById('strategies-container');
 
+
         function renderStrategies(strategiesToRender) {
             strategiesContainer.innerHTML = ''; // Clear existing cards
 
@@ -3551,82 +3940,163 @@
                         <span>Expected Return: <span class="text-[#39FF14]">${strategy.expectedReturn || 'N/A'}</span></span>
                         <span>Volatility: <span class="text-[#FFD700]">${strategy.volatility || 'N/A'}</span></span>
                     </div>
-                    <button class="btn-crimson w-full py-2 font-semibold">View Details</button>
+                    <button class="btn-crimson w-full py-2 font-semibold invest-now-btn" data-strategy="Strategy">Invest in Strategy</button>
                 `;
                 strategiesContainer.appendChild(strategyCard);
             });
         }
 
+        // Update the openInvestmentModal function to use the strategy name
+        function openInvestmentModal(strategyName) {
+            const modal = document.getElementById('strategies-investment-modal');
+            const strategyNameElement = document.getElementById('strategies-modal-strategy-name');
+            const strategyInput = document.getElementById('strategies-selected-strategy');
+            
+            if (!modal || !strategyNameElement || !strategyInput) return;
+            
+            strategyNameElement.textContent = `Invest in ${strategyName}`;
+            strategyInput.value = strategyName;
+            modal.classList.remove('hidden');
+        }
+
+        // Update the filterStrategies function to use the strategy titles
         function filterStrategies() {
-            const selectedGoal = document.getElementById('investment-goal').value;
-            const selectedRiskTolerance = parseInt(document.getElementById('risk-tolerance').value); // Numeric value 0-100
-            const selectedTimeHorizon = document.getElementById('time-horizon').value;
-            // Corrected selector to include data-asset-class attribute
-            const selectedAssetCheckboxes = Array.from(document.querySelectorAll('input[type="checkbox"][data-asset-class="true"]:checked'));
-            const selectedAssetClasses = selectedAssetCheckboxes.map(checkbox => checkbox.value);
+            const strategiesContainer = document.getElementById('strategies-container');
+            if (!strategiesContainer) return;
 
-            const riskMap = {
-                "Very Low": 1,
-                "Low": 2,
-                "Medium": 3,
-                "High": 4,
-                "Very High": 5,
-                "Extreme": 6
-            };
+            // Get filter values
+            const goalFilter = document.getElementById('investment-goal').value;
+            const riskFilter = document.getElementById('risk-tolerance').value;
+            const horizonFilter = document.getElementById('time-horizon').value;
+            const assetCheckboxes = document.querySelectorAll('input[data-asset-class="true"]:checked');
+            const selectedAssets = Array.from(assetCheckboxes).map(cb => cb.value);
 
-            // Map slider value to a risk category for comparison
-            let sliderRiskCategory;
-            if (selectedRiskTolerance >= 0 && selectedRiskTolerance <= 33) {
-                sliderRiskCategory = 'Low';
-            } else if (selectedRiskTolerance > 33 && selectedRiskTolerance <= 66) {
-                sliderRiskCategory = 'Medium';
-            } else {
-                sliderRiskCategory = 'High';
-            }
+            // Filter strategies
+            const filteredStrategies = allStrategies.filter(strategy => {
+                // Check investment goal filter
+                if (goalFilter && strategy.investmentGoal !== goalFilter) return false;
 
+                // Check risk tolerance filter
+                if (riskFilter && strategy.riskTolerance !== riskFilter) return false;
 
-            let filtered = allStrategies.filter(strategy => {
-                // Filter by Investment Goal
-                if (selectedGoal && strategy.investmentGoal !== selectedGoal) {
-                    return false;
-                }
-
-                // Filter by Time Horizon
-                if (selectedTimeHorizon && strategy.timeHorizon !== selectedTimeHorizon) {
-                    return false;
-                }
-
-                // Filter by Risk Tolerance
-                // If the slider is at default (50), don't filter by risk.
-                // Otherwise, filter such that strategy risk is less than or equal to selected risk.
-                // Adjusted logic: If selectedRiskTolerance is 0-33 (Low), show Very Low and Low strategies.
-                // If 34-66 (Medium), show Very Low, Low, Medium strategies.
-                // If 67-100 (High), show all strategies up to High.
-                if (selectedRiskTolerance !== 50) { // Only filter if slider is moved from default
-                    const selectedRiskNum = riskMap[sliderRiskCategory];
-                    const strategyRiskNum = riskMap[strategy.riskTolerance];
-
-                    if (strategyRiskNum > selectedRiskNum) {
-                        return false;
-                    }
-                }
-
-
-                // Filter by Asset Classes (at least one of selected)
-                if (selectedAssetClasses.length > 0) {
-                    const hasMatchingAsset = selectedAssetClasses.some(selectedAsset =>
-                        strategy.assetClasses.includes(selectedAsset)
+                // Check time horizon
+                if (horizonFilter && strategy.timeHorizon !== horizonFilter) return false;
+                
+                // Check asset classes
+                if (selectedAssets.length > 0) {
+                    const hasSelectedAsset = selectedAssets.some(asset => 
+                        strategy.assetClasses.includes(asset)
                     );
-                    if (!hasMatchingAsset) {
-                        return false;
-                    }
+                    if (!hasSelectedAsset) return false;
                 }
-
+                
                 return true;
             });
 
-            renderStrategies(filtered);
+            // Clear existing strategies
+            strategiesContainer.innerHTML = '';
+
+            // Add filtered strategies
+            if (filteredStrategies.length === 0) {
+                strategiesContainer.innerHTML = `
+                    <div class="col-span-1 md:col-span-2 text-center py-10">
+                        <p class="text-xl text-[#A0A0B0]">No strategies match your current filters.</p>
+                        <button id="reset-filters-btn" class="btn-outline px-6 py-2 mt-4 font-semibold">Reset Filters</button>
+                    </div>
+                `;
+                
+                document.getElementById('reset-filters-btn')?.addEventListener('click', () => {
+                    document.getElementById('investment-goal').value = '';
+                    document.getElementById('risk-tolerance').value = '';
+                    document.getElementById('time-horizon').value = '';
+                    document.querySelectorAll('input[data-asset-class="true"]').forEach(cb => cb.checked = false);
+                    filterStrategies();
+                });
+                return;
+            }
+
+            filteredStrategies.forEach(strategy => {
+                const strategyCard = document.createElement('div');
+                strategyCard.className = 'bg-[#101030] p-6 rounded-lg border border-[#303060] transition-all duration-300 hover:border-[#00FFFF] hover:shadow-lg hover:shadow-[#00FFFF]/20';
+                strategyCard.innerHTML = `
+                    <h3 class="text-2xl font-bold text-[#E0E0EB] mb-2">${strategy.title}</h3>
+                    <p class="text-[#A0A0B0] mb-4">${strategy.description}</p>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <p class="text-sm text-[#A0A0B0]">Risk Tolerance</p>
+                            <p class="font-semibold ${getRiskColorClass(strategy.riskTolerance)}">${strategy.riskTolerance}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#A0A0B0]">Time Horizon</p>
+                            <p class="font-semibold text-[#00FFFF]">${formatTimeHorizon(strategy.timeHorizon)}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#A0A0B0]">Expected Return</p>
+                            <p class="font-semibold ${getReturnColorClass(strategy.expectedReturn)}">${strategy.expectedReturn}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#A0A0B0]">Volatility</p>
+                            <p class="font-semibold ${getVolatilityColorClass(strategy.volatility)}">${strategy.volatility}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-[#A0A0B0]">Asset Classes</p>
+                            <p class="font-medium text-[#E0E0EB]">${strategy.assetClasses.join(', ')}</p>
+                        </div>
+                        <button class="invest-now-btn px-4 py-2 rounded-lg bg-[#00FFFF] text-[#0D0D33] font-semibold hover:bg-[#39FF14] transition-colors" 
+                                data-strategy="${strategy.title}">
+                            Invest Now
+                        </button>
+                    </div>
+                `;
+                strategiesContainer.appendChild(strategyCard);
+            });
+
+            // Add event listeners to all invest buttons
+            document.querySelectorAll('.invest-now-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const strategyName = e.target.dataset.strategy;
+                    openInvestmentModal(strategyName);
+                });
+            });
         }
+        
+
+        // Helper functions for strategy display
+        function getRiskLevel(riskText) {
+            if (riskText.includes('Extreme') || riskText.includes('High')) return 'High';
+            if (riskText.includes('Medium')) return 'Medium';
+            return 'Low';
+        }
+
+        function getRiskColorClass(risk) {
+            if (risk.includes('Extreme') || risk.includes('High')) return 'text-[#DC2626]';
+            if (risk.includes('Medium')) return 'text-[#FFD700]';
+            return 'text-[#39FF14]';
+        }
+
+        function getReturnColorClass(returnLevel) {
+            if (returnLevel.includes('Extremely') || returnLevel.includes('Very High')) return 'text-[#39FF14]';
+            if (returnLevel.includes('High') || returnLevel.includes('Medium-High')) return 'text-[#00FFFF]';
+            if (returnLevel.includes('Medium')) return 'text-[#FFD700]';
+            return 'text-[#A0A0B0]';
+        }
+
+        function getVolatilityColorClass(volatility) {
+            if (volatility.includes('Extreme') || volatility.includes('Very High')) return 'text-[#DC2626]';
+            if (volatility.includes('High') || volatility.includes('Medium-High')) return 'text-[#FFD700]';
+            if (volatility.includes('Medium')) return 'text-[#00FFFF]';
+            return 'text-[#39FF14]';
+        }
+
+        function formatTimeHorizon(horizon) {
+            if (horizon === 'short-term') return 'Short-term (0-1 year)';
+            if (horizon === 'medium-term') return 'Medium-term (1-3 years)';
+            return 'Long-term (3+ years)';
+        }
+
+        
 
 
         // Learn Page Guides Data and Logic
@@ -4176,46 +4646,115 @@
             return d;
         }
 
+        // Modify the existing drawPortfolioPieChart function
+// Modify the drawPortfolioPieChart function to handle single strategy case
         function drawPortfolioPieChart() {
-            const svg = document.getElementById('portfolio-pie-chart');
-            const legend = document.getElementById('portfolio-legend');
+            const pieChartContainer = document.querySelector('.pie-chart-container');
+            const pieChartSvg = document.getElementById('portfolio-pie-chart');
+            const legendContainer = document.getElementById('portfolio-legend');
+            
+            if (!pieChartSvg || !legendContainer) return;
 
-            if (!svg || !legend) {
-                console.warn("Portfolio chart elements not found. Skipping pie chart drawing.");
+            // Clear previous chart
+            pieChartSvg.innerHTML = '';
+            legendContainer.innerHTML = '';
+
+            // Get the current holdings from userPortfolio
+            const holdings = userPortfolio.holdings;
+            const strategies = Object.keys(holdings);
+            
+            // If no strategies, show empty state
+            if (strategies.length === 0) {
+                pieChartSvg.innerHTML = `
+                    <text x="100" y="100" text-anchor="middle" fill="#A0A0B0" font-size="14">
+                        No investments yet
+                    </text>
+                `;
+                legendContainer.innerHTML = '<p class="text-[#A0A0B0]">No holdings</p>';
                 return;
             }
 
-            // Clear previous chart and legend
-            svg.innerHTML = '';
-            legend.innerHTML = '';
-
-            const centerX = 100;
-            const centerY = 100;
-            const radius = 80;
-            let currentAngle = 0;
-
-            portfolioData.forEach(slice => {
-                const sliceAngle = (slice.percentage / 100) * 360;
-                const pathData = describeArc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
-
-                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                path.setAttribute("d", pathData);
-                path.setAttribute("fill", slice.color);
-                path.classList.add('transition-all', 'duration-300'); // Add transition for potential future animations
-                svg.appendChild(path);
-
-                // Create legend item
-                const legendItem = document.createElement('div');
-                legendItem.classList.add('flex', 'items-center', 'space-x-2');
-                legendItem.innerHTML = `
-                    <span class="w-4 h-4 rounded-full" style="background-color: ${slice.color};"></span>
-                    <span class="text-[#E0E0EB]">${slice.asset}</span>
-                    <span class="text-[#A0A0B0]">(${slice.percentage}%)</span>
+            // Define color palette
+            const colors = ['#00FFFF', '#39FF14', '#DC2626', '#FFD700', '#ADFF2F', '#FF4500', '#8A2BE2',
+          '#FF1493', '#00CED1', '#7FFF00', '#FF8C00', '#4B0082'];
+            
+            // Calculate total value for percentages
+            const totalValue = userPortfolio.totalValue;
+            
+            // For single strategy, create a full circle
+            if (strategies.length === 1) {
+                const strategy = strategies[0];
+                const value = holdings[strategy].currentValue;
+                const percentage = (value / totalValue * 100).toFixed(1);
+                
+                // Draw full circle
+                pieChartSvg.innerHTML = `
+                    <circle cx="100" cy="100" r="80" fill="${colors[0]}" />
+                    <text x="100" y="100" text-anchor="middle" fill="#0D0D33" font-size="16" font-weight="bold">
+                        ${percentage}%
+                    </text>
                 `;
-                legend.appendChild(legendItem);
-
-                currentAngle += sliceAngle;
+                
+                // Create legend
+                legendContainer.innerHTML = `
+                    <div class="flex items-center mb-2">
+                        <div class="w-4 h-4 rounded-full mr-2" style="background-color: ${colors[0]}"></div>
+                        <span class="text-[#E0E0EB]">${strategy}: $${value.toLocaleString()}</span>
+                    </div>
+                `;
+                
+                return;
+            }
+            
+            // For multiple strategies, create pie chart as before
+            let cumulativePercent = 0;
+            let colorIndex = 0;
+            
+            strategies.forEach(strategy => {
+                const value = holdings[strategy].currentValue;
+                const percentage = (value / totalValue) * 100;
+                const startX = 100 + 80 * Math.cos(2 * Math.PI * cumulativePercent / 100);
+                const startY = 100 + 80 * Math.sin(2 * Math.PI * cumulativePercent / 100);
+                
+                cumulativePercent += percentage;
+                const endX = 100 + 80 * Math.cos(2 * Math.PI * cumulativePercent / 100);
+                const endY = 100 + 80 * Math.sin(2 * Math.PI * cumulativePercent / 100);
+                
+                const largeArcFlag = percentage > 50 ? 1 : 0;
+                
+                const pathData = [
+                    `M 100 100`,
+                    `L ${startX} ${startY}`,
+                    `A 80 80 0 ${largeArcFlag} 1 ${endX} ${endY}`,
+                    `Z`
+                ].join(' ');
+                
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', pathData);
+                path.setAttribute('fill', colors[colorIndex % colors.length]);
+                pieChartSvg.appendChild(path);
+                
+                // Add legend item
+                const legendItem = document.createElement('div');
+                legendItem.className = 'flex items-center mb-2';
+                legendItem.innerHTML = `
+                    <div class="w-4 h-4 rounded-full mr-2" style="background-color: ${colors[colorIndex % colors.length]}"></div>
+                    <span class="text-[#E0E0EB]">${strategy}: $${value.toLocaleString()}</span>
+                `;
+                legendContainer.appendChild(legendItem);
+                
+                colorIndex++;
             });
+            
+            // Add center text with total value
+            const centerText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            centerText.setAttribute('x', '100');
+            centerText.setAttribute('y', '100');
+            centerText.setAttribute('text-anchor', 'middle');
+            centerText.setAttribute('fill', '#000000');
+            centerText.setAttribute('font-size', '14');
+            centerText.textContent = `$${totalValue.toLocaleString()}`;
+            pieChartSvg.appendChild(centerText);
         }
 
         // --- Portfolio Value Over Time Chart Logic ---
@@ -4368,7 +4907,140 @@
             });
         });
 
+        // Handle Invest in Strategy buttons on strategy cards
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('invest-now-btn')) {
+                const strategyName = e.target.getAttribute('data-strategy');
+                document.getElementById('strategies-selected-strategy').value = strategyName;
+                document.getElementById('strategies-modal-strategy-name').textContent = `Invest in ${strategyName}`;
+                document.getElementById('strategies-investment-modal').classList.remove('hidden');
+            }
+        });
 
+        // Strategies Page Investment Modal Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle "Invest Now" buttons in the Strategies page
+            document.querySelectorAll('#strategies-container .invest-now-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const strategyName = this.getAttribute('data-strategy');
+                    document.getElementById('strategies-selected-strategy').value = strategyName;
+                    document.getElementById('strategies-modal-strategy-name').textContent = `Invest in ${strategyName}`;
+                    document.getElementById('strategies-investment-modal').classList.remove('hidden');
+                });
+            });
+
+            // Also add this event listener to close modal when clicking outside
+            document.addEventListener('click', function(event) {
+                if (investmentModal && !investmentModal.classList.contains('hidden')) {
+                    if (event.target === investmentModal) {
+                        investmentModal.classList.add('hidden');
+                        console.log("Closed investment modal by clicking outside");
+                    }
+                }
+                
+                // Also handle strategies modal
+                const strategiesModal = document.getElementById('strategies-investment-modal');
+                if (strategiesModal && !strategiesModal.classList.contains('hidden')) {
+                    if (event.target === strategiesModal) {
+                        strategiesModal.classList.add('hidden');
+                        console.log("Closed strategies investment modal by clicking outside");
+                    }
+                }
+            });
+
+            // Close modal button for Strategies page
+            document.getElementById('strategies-close-modal').addEventListener('click', function() {
+                document.getElementById('strategies-investment-modal').classList.add('hidden');
+            });
+
+            // Cancel button for Strategies page
+            document.getElementById('strategies-cancel-investment').addEventListener('click', function() {
+                document.getElementById('strategies-investment-modal').classList.add('hidden');
+            });
+
+            // Form submission for Strategies page
+            document.getElementById('strategies-investment-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const strategy = document.getElementById('strategies-selected-strategy').value;
+                const amount = parseFloat(document.getElementById('strategies-investment-amount').value);
+                const duration = document.getElementById('strategies-investment-duration').value;
+
+                
+                
+                // Here you would normally process the investment
+                console.log(`Investing in ${strategy}: $${amount} for ${duration} months`);
+
+                if (isNaN(amount)) {
+                    alert('Please enter a valid investment amount');
+                    return;
+                }
+
+                // Add the transaction
+                addTransaction('investment', strategy, amount);
+
+                // Add to portfolio
+                addToPortfolio(strategy, amount);
+                            
+                // Show success notification
+                showTradeNotification(`Successfully invested $${amount} in ${strategy} for ${duration} months`);
+                
+                // Close the modal
+                document.getElementById('strategies-investment-modal').classList.add('hidden');
+            });
+        });
+
+        // Performance Page Investment Modal Logic (existing code, just for reference)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle "Invest Now" buttons in the Performance page
+            document.querySelectorAll('.invest-now-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const strategyName = this.getAttribute('data-strategy');
+                    document.getElementById('selected-strategy').value = strategyName;
+                    document.getElementById('modal-strategy-name').textContent = `Invest in ${strategyName}`;
+                    document.getElementById('investment-modal').classList.remove('hidden');
+                });
+            });
+
+            // Close modal button for Performance page
+            document.getElementById('close-modal').addEventListener('click', function() {
+                document.getElementById('investment-modal').classList.add('hidden');
+            });
+
+            // Cancel button for Performance page
+            document.getElementById('cancel-investment').addEventListener('click', function() {
+                document.getElementById('investment-modal').classList.add('hidden');
+            });
+
+            // Form submission for Performance page
+            document.getElementById('investment-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const strategy = document.getElementById('selected-strategy').value;
+                const amount = parseFloat(document.getElementById('investment-amount').value);
+                const duration = document.getElementById('investment-duration').value;
+                
+                // Here you would normally process the investment
+                console.log(`Investing in ${strategy}: $${amount} for ${duration} months`);
+
+                if (isNaN(amount)) {
+                    alert('Please enter a valid investment amount');
+                    return;
+                }
+
+                // Add the transaction
+                addTransaction('investment', strategy, amount);
+
+                // Add to portfolio
+                addToPortfolio(strategy, amount);
+                
+                // Show success notification
+                showTradeNotification(`Successfully invested $${amount} in ${strategy} for ${duration} months`);
+                
+                // Close the modal
+                document.getElementById('investment-modal').classList.add('hidden');
+            });
+
+            
+        });
         // All Transactions Page Data and Logic
         const allTransactions = [
             { type: "Buy", asset: "Bitcoin", amount: "0.05 BTC", price: "$68,000", value: "+$3,400.00", date: "2025-07-25", status: "positive" },
@@ -4388,30 +5060,45 @@
             { type: "Stake", asset: "Ethereum", amount: "0.2 ETH", value: "Staked", date: "2025-07-11", status: "neutral" }
         ];
 
+        // Modify the existing renderAllTransactions function
         function renderAllTransactions() {
-            const transactionsContainer = document.getElementById('all-transactions-container');
-            if (!transactionsContainer) {
-                console.warn("All transactions container not found. Skipping render.");
-                return;
-            }
-
-            transactionsContainer.innerHTML = ''; // Clear existing transactions
-
-            allTransactions.forEach(transaction => {
-                const transactionCard = document.createElement('div');
-                transactionCard.classList.add('transaction-card');
-
-                transactionCard.innerHTML = `
-                    <div class="flex-1">
-                        <p class="type">${transaction.type} ${transaction.asset}</p>
-                        <p class="details">${transaction.amount} ${transaction.price ? `@ ${transaction.price}` : ''}</p>
-                    </div>
-                    <div class="flex-shrink-0 text-right">
-                        <p class="value ${transaction.status}">${transaction.value}</p>
-                        <p class="date">${transaction.date}</p>
+            const container = document.getElementById('all-transactions-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (userPortfolio.transactions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-[#A0A0B0]">
+                        No transactions yet
                     </div>
                 `;
-                transactionsContainer.appendChild(transactionCard);
+                return;
+            }
+            
+            // Sort transactions by date (newest first)
+            const sortedTransactions = [...userPortfolio.transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sortedTransactions.forEach(tx => {
+                const txElement = document.createElement('div');
+                txElement.className = 'transaction-card';
+                
+                const isPositive = tx.type === 'investment';
+                const valueClass = isPositive ? 'positive' : 'negative';
+                const valuePrefix = isPositive ? '+' : '-';
+                
+                txElement.innerHTML = `
+                    <div>
+                        <p class="type">${tx.strategy} ${tx.type}</p>
+                        <p class="details">${tx.amount} ${tx.type === 'investment' ? 'invested' : 'withdrawn'}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="value ${valueClass}">${valuePrefix}$${tx.value.toFixed(2)}</p>
+                        <p class="date">${tx.date}</p>
+                    </div>
+                `;
+                
+                container.appendChild(txElement);
             });
         }
 
@@ -4612,7 +5299,7 @@
                 { id: 'login-header-btn', page: 'auth', tab: 'login' },
                 { id: 'explore-strategies-btn', page: 'strategies' },
                 { id: 'learn-more-btn', page: 'learn' },
-                { id: 'discover-now-btn', page: 'strategies' },
+                { id: 'discover-now-btn', page: 'performance' },
                 { id: 'view-insights-btn', page: 'insights' },
                 { id: 'meet-assistant-btn', page: 'ai-assistant' },
                 { id: 'about-footer-link', page: 'about' },
@@ -4874,6 +5561,15 @@
             const emailInput = document.getElementById('subscribe-email');
             const responseDiv = document.getElementById('subscribe-response');
 
+            if (Object.keys(userPortfolio.holdings).length === 0) {
+                // You can add some sample data here if you want
+                addToPortfolio('Amihud_14', 5000);
+                addToPortfolio('Volatility_14', 3000);
+            }
+            
+            // Update UI initially
+            updatePortfolioUI();
+
             if (subscribeBtn && emailInput && responseDiv) {
                 subscribeBtn.addEventListener('click', function(event) {
                     // Prevent the form from submitting
@@ -4907,6 +5603,356 @@
                 });
             }
         });
+
+        // Subscribe Button Functionality
+        document.getElementById('subscribe-btn')?.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent form submission
+            
+            const emailInput = document.getElementById('subscribe-email');
+            const responseDiv = document.getElementById('subscribe-response');
+            
+            if (!emailInput || !responseDiv) return;
+            
+            const email = emailInput.value.trim();
+            
+            // Simple email validation
+            if (!email || !email.includes('@') || !email.includes('.')) {
+                responseDiv.textContent = 'Please enter a valid email address';
+                responseDiv.style.color = '#DC2626'; // Red for error
+                return;
+            }
+            
+            // Show loading state
+            responseDiv.textContent = 'Subscribing...';
+            responseDiv.style.color = '#00FFFF'; // Electric blue
+            
+            // Simulate API call with setTimeout
+            setTimeout(() => {
+                // Success response
+                responseDiv.textContent = 'Thank you for subscribing! You\'ll receive our updates soon.';
+                responseDiv.style.color = '#39FF14'; // Neon green
+                
+                // Clear the input
+                emailInput.value = '';
+                
+                // Optionally store the email in Firestore if needed
+                if (db && userId) {
+                    const subscriptionsRef = collection(db, 'subscriptions');
+                    setDoc(doc(subscriptionsRef, email), {
+                        email: email,
+                        subscribedAt: new Date(),
+                        userId: userId
+                    }).catch(error => {
+                        console.error("Error saving subscription:", error);
+                    });
+                }
+            }, 1500);
+        });
+
+        // Also add event listener for Enter key in the email input
+        document.getElementById('subscribe-email')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('subscribe-btn').click();
+            }
+        });
+
+        // Add this code to your existing script, preferably near the other authentication-related code
+
+        // Sign Up Form Submission
+        document.getElementById('signup-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const username = document.getElementById('signup-username').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            
+            // Basic validation
+            if (!username || !email || !password || !confirmPassword) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters');
+                return;
+            }
+            
+            // Show loading state on the button
+            const signupButton = form.querySelector('button[type="submit"]');
+            const originalButtonText = signupButton.textContent;
+            signupButton.textContent = 'Creating account...';
+            signupButton.disabled = true;
+            
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
+                alert('Account created successfully! You can now login.');
+                showAuthTab('login');
+                document.getElementById('login-email').value = email; // Pre-fill login email
+            } finally {
+                form.reset(); // Clear all signup fields
+                // Reset button state (form is already cleared)
+                signupButton.textContent = originalButtonText;
+                signupButton.disabled = false;
+            }
+        });
+
+        // Login Form Submission
+        document.getElementById('login-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            // Show loading state on the button
+            const loginButton = form.querySelector('button[type="submit"]');
+            const originalButtonText = loginButton.textContent;
+            loginButton.textContent = 'Logging in...';
+            loginButton.disabled = true;
+            
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
+                alert('Login successful!');
+                showPage('home');
+            } finally {
+                // Reset form and button state
+                form.reset();
+                loginButton.textContent = originalButtonText;
+                loginButton.disabled = false;
+            }
+        });
+
+        // Investment Modal Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const investButtons = document.querySelectorAll('.invest-now-btn');
+            const investmentModal = document.getElementById('investment-modal');
+            const closeModal = document.getElementById('close-modal');
+            const cancelInvestment = document.getElementById('cancel-investment');
+            const modalStrategyName = document.getElementById('modal-strategy-name');
+            const selectedStrategy = document.getElementById('selected-strategy');
+            const investmentForm = document.getElementById('investment-form');
+
+            // Handle Invest Now button clicks
+            investButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const strategy = this.getAttribute('data-strategy');
+                    modalStrategyName.textContent = `Invest in ${strategy}`;
+                    selectedStrategy.value = strategy;
+                    investmentModal.classList.remove('hidden');
+                });
+            });
+
+            // Close modal handlers
+            closeModal.addEventListener('click', () => investmentModal.classList.add('hidden'));
+            cancelInvestment.addEventListener('click', () => investmentModal.classList.add('hidden'));
+            investmentModal.addEventListener('click', (e) => {
+                if (e.target === investmentModal) {
+                    investmentModal.classList.add('hidden');
+                }
+            });
+
+            // Handle form submission
+            investmentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const strategy = selectedStrategy.value;
+                const amount = document.getElementById('investment-amount').value;
+                const duration = document.getElementById('investment-duration').value;
+                
+                // Here you would typically send this data to your backend
+                console.log(`Investing $${amount} in ${strategy} for ${duration} months`);
+                
+                // Show success notification
+                showTradeNotification(`Successfully invested $${amount} in ${strategy}`);
+                
+                // Close modal
+                investmentModal.classList.add('hidden');
+            });
+
+            // Function to show trade notification
+            function showTradeNotification(message) {
+                const notification = document.getElementById('trade-notification');
+                notification.textContent = message;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 5000);
+            }
+        });
+
+
+        // Performance Page Chart Toggling
+        function setupPerformancePage() {
+            // Equal-Weight Chart Buttons
+            const ewChartButtons = document.querySelectorAll('#ew-chart-buttons .chart-range-button');
+            const ewChartContainer = document.getElementById('ew-chart-container');
+            
+            // Value-Weight Chart Buttons
+            const vwChartButtons = document.querySelectorAll('#vw-chart-buttons .chart-range-button');
+            const vwChartContainer = document.getElementById('vw-chart-container');
+            
+            // Sentiment Chart Buttons
+            const sentimentChartButtons = document.querySelectorAll('#sentiment-chart-buttons .chart-range-button');
+            const sentimentChartContainer = document.getElementById('sentiment-chart-container');
+            
+            // Chart URLs mapping
+            const chartUrls = {
+                // Equal-Weight Charts
+                'ew-cumulative': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754298233/ew_cumulative_returns_xwdofz.png',
+                'ew-log-cumulative': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754298597/ew_log_cumulative_returns_b4v0ss.png',
+                'ew-performance-radar': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754298429/ew_performance_radar_sdmvlp.png',
+                'ew-returns-candles': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754298481/ew_returns_candles_tdm5kh.png',
+                'ew-performance-heatmap': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754298384/ew_performance_heatmap_uputpi.png',
+                'ew-drawdown-analysis': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754298317/ew_drawdown_analysis_spghsw.png',
+                'ew-rolling-sharpe': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754298526/ew_rolling_sharpe_dashboard_vzawss.png',
+                'ew-mean-bars': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754299071/mean_bars_EW_ao1tmy.png',
+                'ew-vol-bars': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754298831/vol_bars_EW_htgfb7.png',
+                'ew-sharpe-bars': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754298946/sharpe_bars_EW_xhpaqe.png',
+                
+                // Value-Weight Charts
+                'vw-cumulative': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754299327/vw_cumulative_returns_n33xfy.png',
+                'vw-log-cumulative': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754299752/vw_log_cumulative_returns_zn0gnx.png',
+                'vw-performance-radar': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754299479/vw_performance_radar_donpbj.png',
+                'vw-returns-candles': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754299702/vw_returns_candles_obaw3l.png',
+                'vw-performance-heatmap': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754299374/vw_performance_heatmap_nyesat.png',
+                'vw-drawdown-analysis': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754299527/vw_drawdown_analysis_uc7zlp.png',
+                'vw-rolling-sharpe': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754299433/vw_rolling_sharpe_dashboard_jxv1u8.png',
+                'vw-mean-bars': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754300166/mean_bars_VW_oilkoi.png',
+                'vw-vol-bars': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754299983/vol_bars_VW_jfoats.png',
+                'vw-sharpe-bars': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754300057/sharpe_bars_VW_euhfxv.png',
+                
+                // Sentiment Charts
+                'sentiment-cumulative': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754049657/cumret_W-WED_lebrez.png',
+                'sentiment-log-cumulative': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754049665/log_cumret_W-WED_mduloq.png',
+                'sentiment-sharpe': 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754049676/sharpe_W-WED_cfark7.png'
+            };
+            
+            // Chart descriptions mapping
+            const chartDescriptions = {
+                // Equal-Weight Charts
+                'ew-cumulative': 'This chart illustrates the cumulative returns of our top performing Equal-Weight strategies over time, compared to Bitcoin as a baseline.',
+                'ew-log-cumulative': 'This chart illustrates the logarithmic cumulative returns of our top performing Equal-Weight strategies over time, compared to Bitcoin as a baseline.',
+                'ew-performance-radar': 'This chart illustrates our top performing Equal-Weight strategies with the best Sharpe ratios, annualised returns, average returns, high win rates (more positive days) and lowest drawdown and volatility, showing all categories as a comparison.',
+                'ew-returns-candles': 'This chart illustrates the monthly returns of our top performing Equal-Weight Logarithmic strategies over time.',
+                'ew-performance-heatmap': 'This chart illustrates the monthly positive and negative returns of our top performing Equal-Weight Logarithmic strategies over time.',
+                'ew-drawdown-analysis': 'This chart illustrates the max drawdowns and cumulative returns with drawdowns of our top performing Equal-Weight Logarithmic strategies over time.',
+                'ew-rolling-sharpe': 'This chart illustrates the rolling Sharpe ratios, rolling volatilites, return distribution and correlation matrix of our top performing Equal-Weight Logarithmic strategies over time.',
+                'ew-mean-bars': 'This chart illustrates the annualised mean returns of our top performing Equal-Weight strategies, compared to Bitcoin as a baseline.',
+                'ew-vol-bars': 'This chart illustrates the annualised volatilities of our top performing Equal-Weight strategies, compared to Bitcoin as a baseline.',
+                'ew-sharpe-bars': 'This chart illustrates the annualised Sharpe ratios of our top performing Equal-Weight strategies, compared to Bitcoin as a baseline.',
+                
+                // Value-Weight Charts
+                'vw-cumulative': 'This chart illustrates the cumulative returns of our top performing Value-Weight strategies over time, compared to Bitcoin as a baseline.',
+                'vw-log-cumulative': 'This chart illustrates the logarithmic cumulative returns of our top performing Value-Weight strategies over time, compared to Bitcoin as a baseline.',
+                'vw-performance-radar': 'This chart illustrates our top performing Value-Weight strategies with the best Sharpe ratios, annualised returns, average returns, high win rates (more positive days) and lowest drawdown and volatility, showing all categories as a comparison.',
+                'vw-returns-candles': 'This chart illustrates the monthly returns of our top performing Value-Weight Logarithmic strategies over time.',
+                'vw-performance-heatmap': 'This chart illustrates the monthly positive and negative returns of our top performing Value-Weight Logarithmic strategies over time.',
+                'vw-drawdown-analysis': 'This chart illustrates the max drawdowns and cumulative returns with drawdowns of our top performing Value-Weight Logarithmic strategies over time.',
+                'vw-rolling-sharpe': 'This chart illustrates the rolling Sharpe ratios, rolling volatilites, return distribution and correlation matrix of our top performing Value-Weight Logarithmic strategies over time.',
+                'vw-mean-bars': 'This chart illustrates the annualised mean returns of our top performing Value-Weight strategies, compared to Bitcoin as a baseline.',
+                'vw-vol-bars': 'This chart illustrates the annualised volatilities of our top performing Value-Weight strategies, compared to Bitcoin as a baseline.',
+                'vw-sharpe-bars': 'This chart illustrates the annualised Sharpe ratios of our top performing Value-Weight strategies, compared to Bitcoin as a baseline.',
+                
+                // Sentiment Charts
+                'sentiment-cumulative': 'This chart illustrates the cumulative returns of our VADER sentiment trading strategies over time, compared to Bitcoin as a baseline.',
+                'sentiment-log-cumulative': 'This chart illustrates the logarithmic cumulative returns of our VADER sentiment trading strategies over time, compared to Bitcoin as a baseline.',
+                'sentiment-sharpe': 'This chart illustrates the Sharpe ratios of our VADER sentiment trading strategies over time, compared to Bitcoin as a baseline.'
+            };
+            
+            // Function to show a chart in a container
+            function showChart(container, chartId) {
+                const url = chartUrls[chartId];
+                const description = chartDescriptions[chartId];
+                
+                if (!url || !description) {
+                    console.error('Chart URL or description not found for:', chartId);
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <img src="${url}" alt="${chartId}" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                    <p class="text-lg text-[#A0A0B0] mt-6">
+                        ${description}
+                        <br>
+                        <strong>Disclaimer: Past performance is not indicative of future results. Investment in cryptocurrencies carries significant risk.</strong>
+                    </p>
+                `;
+                container.classList.remove('hidden');
+            }
+            
+            // Set up event listeners for Equal-Weight charts
+            ewChartButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const chartId = button.dataset.chart;
+                    
+                    // Update active state
+                    ewChartButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Show the selected chart
+                    showChart(ewChartContainer, chartId);
+                });
+            });
+            
+            // Set up event listeners for Value-Weight charts
+            vwChartButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const chartId = button.dataset.chart;
+                    
+                    // Update active state
+                    vwChartButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Show the selected chart
+                    showChart(vwChartContainer, chartId);
+                });
+            });
+            
+            // Set up event listeners for Sentiment charts
+            sentimentChartButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const chartId = button.dataset.chart;
+                    
+                    // Update active state
+                    sentimentChartButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Show the selected chart
+                    showChart(sentimentChartContainer, chartId);
+                });
+            });
+            
+            // Show the first chart for each section by default
+            if (ewChartButtons.length > 0) {
+                ewChartButtons[0].click();
+            }
+            if (vwChartButtons.length > 0) {
+                vwChartButtons[0].click();
+            }
+            if (sentimentChartButtons.length > 0) {
+                sentimentChartButtons[0].click();
+            }
+        }
+
+        // Initialize the holdings table when the portfolio page loads
+        function setupPortfolioPage() {
+            if (document.getElementById('page-portfolio')?.classList.contains('active')) {
+                updateHoldingsTable();
+            }
+        }
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -4952,6 +5998,81 @@
                     }
                 });
             }
+        });
+    </script>
+    <!-- Add this JavaScript code to handle the chart toggling -->
+    <script>
+        // Chart data mapping
+        const chartData = {
+            'sentiment-daily': {
+                src: 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754223440/daily_avg_sentiment_gkkvbs.png',
+                alt: 'Daily Average Sentiment Chart',
+                desc: 'This chart illustrates the daily average sentiment over time using the VADER sentiment scoring.'
+            },
+            'sentiment-monthly': {
+                src: 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754223471/monthly_avg_heatmap_kndgoc.png',
+                alt: 'Monthly Sentiment Heatmap',
+                desc: 'This chart illustrates the monthly sentiment heatmap over time using the VADER sentiment scoring.'
+            },
+            'polarity-daily': {
+                src: 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754049693/polarity_daily_avg_sentiment_nktvp0.png',
+                alt: 'Polarity Daily Average Sentiment',
+                desc: 'This chart illustrates the daily average sentiment over time using the Textblob polarity scoring.'
+            },
+            'polarity-monthly': {
+                src: 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754049805/polarity_monthly_avg_heatmap_onzbvj.png',
+                alt: 'Polarity Monthly Heatmap',
+                desc: 'This chart illustrates the monthly sentiment heatmap over time using the Textblob polarity scoring.'
+            },
+            'wordcloud-positive': {
+                src: 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754049737/wordcloud_positive_yeibkt.png',
+                alt: 'Positive WordCloud',
+                desc: 'This chart illustrates the main positive words, including significant, growth, strong and innovation.'
+            },
+            'wordcloud-negative': {
+                src: 'https://res.cloudinary.com/dlemf0esl/image/upload/v1754049686/wordcloud_negative_ao4cv1.png',
+                alt: 'Negative WordCloud',
+                desc: 'This chart illustrates the main negative words, including loss, risk, drop and uncertainty.'
+            }
+        };
+
+        // Function to handle chart button clicks
+        function setupChartButtons(buttonContainerId, chartContainerId) {
+            const buttons = document.querySelectorAll(`#${buttonContainerId} .chart-range-button`);
+            const container = document.getElementById(chartContainerId);
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Update active button
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Get chart data
+                    const chartId = button.dataset.chart;
+                    const chart = chartData[chartId];
+                    
+                    // Update container with chart
+                    container.innerHTML = `
+                        <img src="${chart.src}" alt="${chart.alt}" class="mx-auto rounded-lg shadow-xl border border-[#00FFFF] max-w-full h-auto">
+                        <p class="text-lg text-[#A0A0B0] mt-6">${chart.desc}</p>
+                    `;
+                    
+                    // Show container if hidden
+                    container.classList.remove('hidden');
+                });
+            });
+            
+            // Trigger click on first button to show initial chart
+            if (buttons.length > 0) {
+                buttons[0].click();
+            }
+        }
+
+        // Initialize all chart button groups when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setupChartButtons('vader-chart-buttons', 'vader-chart-container');
+            setupChartButtons('polarity-chart-buttons', 'polarity-chart-container');
+            setupChartButtons('wordcloud-buttons', 'wordcloud-container');
         });
     </script>
 </body>
